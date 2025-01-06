@@ -1,4 +1,6 @@
-import 'package:dio/dio.dart';
+import 'package:e_ticket/core/errors/failure.dart';
+import 'package:e_ticket/core/common/helper/base_client.dart';
+import 'package:e_ticket/core/utils/urls.dart';
 import 'package:e_ticket/modules/config/data/models/counter_model.dart';
 import 'package:e_ticket/modules/config/data/models/ticket_routes_model.dart';
 import 'package:e_ticket/modules/config/data/models/ticket_type_model.dart';
@@ -12,47 +14,59 @@ abstract class ConfigRemoteDataSource {
 }
 
 class ConfigRemoteDataSourceImpl implements ConfigRemoteDataSource {
-  final Dio client;
-
-  ConfigRemoteDataSourceImpl({required this.client});
-
   @override
   Future<UserResponse> fetchUsers() async {
     try {
-      final response = await client.get('/admin/users');
+      final response = await BaseClient.get(url: '${Urls.baseUrl}/admin/users');
       return UserResponse.fromJson(response.data);
+    } on ClientException catch (e) {
+      throw ValidationFailure(message: e.message);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
     } catch (e) {
-      throw Exception('Failed to load users: $e');
+      throw NetworkFailure(message: 'Unexpected error: $e');
     }
   }
 
   @override
   Future<TicketRoutesModel> fetchTicketRoutes() async {
     try {
-      final response = await client.get('/admin/ticketroutes');
+      final response = await BaseClient.get(url: '${Urls.baseUrl}/admin/ticketroutes');
       return TicketRoutesModel.fromJson(response.data);
+    } on ClientException catch (e) {
+      throw ValidationFailure(message: e.message);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
     } catch (e) {
-      throw Exception('Failed to load users: $e');
+      throw NetworkFailure(message: 'Unexpected error: $e');
     }
   }
 
   @override
   Future<TicketTypeModel> fetchTicketTypes() async {
     try {
-      final response = await client.get('/admin/ticket-types');
+      final response = await BaseClient.get(url: '${Urls.baseUrl}/admin/ticket-types');
       return TicketTypeModel.fromJson(response.data);
+    } on ClientException catch (e) {
+      throw ValidationFailure(message: e.message);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
     } catch (e) {
-      throw Exception('Failed to load users: $e');
+      throw NetworkFailure(message: 'Unexpected error: $e');
     }
   }
 
   @override
   Future<CounterModel> fetchCounters() async {
     try {
-      final response = await client.get('/admin/ticketcounters');
+      final response = await BaseClient.get(url: '${Urls.baseUrl}/admin/ticketcounters');
       return CounterModel.fromJson(response.data);
+    } on ClientException catch (e) {
+      throw ValidationFailure(message: e.message);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
     } catch (e) {
-      throw Exception('Failed to load users: $e');
+      throw NetworkFailure(message: 'Unexpected error: $e');
     }
   }
 }

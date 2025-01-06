@@ -10,7 +10,7 @@ class TicketTypeCubit extends Cubit<TicketTypeState> {
   TicketTypeCubit(this.getTicketTypeUsecase) : super(TicketTypeInitial());
 
   Future<void> loadTicketTypes() async {
-    emit(TicketTypeInitial());
+    emit(TicketTypeLoading());
 
     final ticketTypes = await getTicketTypeUsecase.execute();
     ticketTypes.fold(

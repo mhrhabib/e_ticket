@@ -41,3 +41,19 @@ class ValidationFailure extends Failure {
   @override
   String toString() => 'ValidationFailure: $message';
 }
+
+class ServerException implements Exception {
+  final String message;
+  ServerException({required this.message});
+
+  @override
+  String toString() => 'ServerException: $message';
+}
+
+class ClientException implements Exception {
+  final String message;
+  ClientException({required this.message});
+
+  @override
+  String toString() => 'ClientException: $message';
+}

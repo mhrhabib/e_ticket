@@ -12,6 +12,7 @@ class UserCubit extends Cubit<UserState> {
   UserCubit({required this.getUsersUseCase}) : super(UserInitial());
 
   Future<void> loadUsers() async {
+    print('loadUsers() is called');
     emit(UserLoading());
 
     final users = await getUsersUseCase.execute();

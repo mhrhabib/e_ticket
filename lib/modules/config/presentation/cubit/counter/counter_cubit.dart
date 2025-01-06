@@ -11,6 +11,8 @@ class CounterCubit extends Cubit<CounterState> {
   CounterCubit(this.getCountersUsecase) : super(CounterInitial());
 
   Future<void> loadCounters() async {
+    print('loadCounters() is called');
+    emit(CounterLoading());
     final counters = await getCountersUsecase.execute();
     counters.fold(
       (failure) => emit(CounterFailure(_mapFailureToMessage(failure))),
