@@ -11,8 +11,13 @@ final class TicketSaleInitial extends TicketSaleState {}
 
 final class TicketSaleLoading extends TicketSaleState {}
 
-final class TicketSaleSuccess extends TicketSaleState {
+final class TicketSaleListSuccess extends TicketSaleState {
   final TicketsModel ticketsModel;
+  const TicketSaleListSuccess(this.ticketsModel);
+}
+
+final class TicketSaleSuccess extends TicketSaleState {
+  final TicketSaleModel ticketsModel;
   const TicketSaleSuccess(this.ticketsModel);
 }
 

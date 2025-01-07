@@ -27,6 +27,10 @@ class CounterCubit extends Cubit<CounterState> {
     }
   }
 
+  void resetCounter() {
+    emit(CounterInitial());
+  }
+
   String _mapFailureToMessage(Failure failure) {
     if (failure is ServerFailure) {
       return 'Server Error: ${failure.message}';

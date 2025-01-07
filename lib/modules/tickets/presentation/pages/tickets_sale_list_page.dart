@@ -33,7 +33,7 @@ class TicketsSaleListPage extends StatelessWidget {
               child: Text(state.message),
             );
           }
-          if (state is TicketSaleSuccess) {
+          if (state is TicketSaleListSuccess) {
             return ListView.builder(
                 itemCount: state.ticketsModel.data!.data!.length,
                 itemBuilder: (context, index) {

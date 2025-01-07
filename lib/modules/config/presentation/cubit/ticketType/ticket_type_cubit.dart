@@ -26,6 +26,10 @@ class TicketTypeCubit extends Cubit<TicketTypeState> {
     }
   }
 
+  void resetType() {
+    emit(TicketTypeInitial());
+  }
+
   String _mapFailureToMessage(Failure failure) {
     if (failure is ServerFailure) {
       return 'Server Error: ${failure.message}';

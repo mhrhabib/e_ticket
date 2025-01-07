@@ -2,15 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:e_ticket/core/utils/urls.dart';
 import 'package:e_ticket/modules/config/data/datasources/config_remote_data_source.dart';
 import 'package:e_ticket/modules/config/data/repository/counter_repository_impl.dart';
+import 'package:e_ticket/modules/config/data/repository/ticket_price_repository_impl.dart';
 import 'package:e_ticket/modules/config/data/repository/ticket_routes_repository_impl.dart';
 import 'package:e_ticket/modules/config/data/repository/ticket_type_repository_impl.dart';
 import 'package:e_ticket/modules/config/domain/repository/counter_repository.dart';
 import 'package:e_ticket/modules/config/domain/repository/ticket_routes_repository.dart';
 import 'package:e_ticket/modules/config/domain/repository/ticket_type_repository.dart';
+import 'package:e_ticket/modules/config/domain/usecases/calculate_ticket_price_usecase.dart';
 import 'package:e_ticket/modules/config/domain/usecases/get_counters_usecase.dart';
 import 'package:e_ticket/modules/config/domain/usecases/get_ticket_routes_usecase.dart';
 import 'package:e_ticket/modules/config/domain/usecases/get_ticket_type_usecase.dart';
 import 'package:e_ticket/modules/config/presentation/cubit/counter/counter_cubit.dart';
+import 'package:e_ticket/modules/config/presentation/cubit/ticketPrice/ticket_price_cubit.dart';
 import 'package:e_ticket/modules/config/presentation/cubit/ticketRoutes/ticket_route_cubit.dart';
 import 'package:e_ticket/modules/config/presentation/cubit/ticketType/ticket_type_cubit.dart';
 import 'package:e_ticket/modules/profile/data/datasource/profile_remote_data_source.dart';
@@ -28,6 +31,7 @@ import '../modules/auth/domain/repositories/auth_repository.dart';
 import '../modules/auth/domain/usecases/login_use_case.dart';
 import '../modules/auth/presentation/cubit/auth_cubit.dart';
 import '../modules/config/data/repository/user_repository_impl.dart';
+import '../modules/config/domain/repository/ticket_price_repository.dart';
 import '../modules/config/domain/repository/user_repositoy.dart';
 import '../modules/config/domain/usecases/get_user_usecase.dart';
 import '../modules/config/presentation/cubit/user/user_cubit.dart';
@@ -91,4 +95,12 @@ void setup() {
   sl.registerLazySingleton<TicketSaleRepository>(() => TicketsRepositoryImpl(sl()));
   sl.registerLazySingleton(() => TicketSaleUsecase(sl()));
   sl.registerFactory(() => TicketSaleCubit(ticketSaleUsecase: sl()));
+
+  //ticket price
+  // Repository
+  sl.registerLazySingleton<TicketPriceRepository>(() => TicketPriceRepositoryImpl(sl()));
+  // Use case
+  sl.registerLazySingleton(() => CalculateTicketPriceUseCase(sl()));
+  // Cubit
+  sl.registerFactory(() => TicketPriceCubit(sl()));
 }

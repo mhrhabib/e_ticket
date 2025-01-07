@@ -28,6 +28,10 @@ class TicketRouteCubit extends Cubit<TicketRouteState> {
     }
   }
 
+  void resetRoute() {
+    emit(TicketRouteInitial());
+  }
+
   String _mapFailureToMessage(Failure failure) {
     if (failure is ServerFailure) {
       return 'Server Error: ${failure.message}';

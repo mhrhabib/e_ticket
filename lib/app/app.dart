@@ -1,5 +1,6 @@
 import 'package:e_ticket/app/di.dart';
 import 'package:e_ticket/modules/config/presentation/cubit/counter/counter_cubit.dart';
+import 'package:e_ticket/modules/config/presentation/cubit/ticketPrice/ticket_price_cubit.dart';
 import 'package:e_ticket/modules/config/presentation/cubit/ticketRoutes/ticket_route_cubit.dart';
 import 'package:e_ticket/modules/config/presentation/cubit/ticketType/ticket_type_cubit.dart';
 import 'package:e_ticket/modules/config/presentation/cubit/user/user_cubit.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => sl<TicketRouteCubit>()..loadTicketRoutes()),
         BlocProvider(create: (context) => sl<ProfileCubit>()..loadProfilesData()),
         BlocProvider(create: (context) => sl<TicketSaleCubit>()..loadTicketSaleList()),
+        BlocProvider(create: (context) => sl<TicketPriceCubit>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

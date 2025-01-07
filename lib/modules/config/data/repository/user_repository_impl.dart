@@ -14,7 +14,7 @@ class UserRepositoryImpl implements UserRepository {
     try {
       final response = await remoteDataSource.fetchUsers();
 
-      return Right(response.data);
+      return Right(response.data!);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

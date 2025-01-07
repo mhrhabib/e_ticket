@@ -29,6 +29,10 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
+  void resetUser() {
+    emit(UserInitial());
+  }
+
   String _mapFailureToMessage(Failure failure) {
     if (failure is ServerFailure) {
       return 'Server Error: ${failure.message}';
