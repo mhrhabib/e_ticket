@@ -12,8 +12,9 @@ final class TicketTypeInitial extends TicketTypeState {}
 final class TicketTypeLoading extends TicketTypeState {}
 
 final class TicketTypeSuccess extends TicketTypeState {
-  final List<TicketType> ticketType;
-  const TicketTypeSuccess(this.ticketType);
+  final List<TicketType> ticketTypes;
+  final TicketType? ticketType;
+  const TicketTypeSuccess(this.ticketTypes, this.ticketType);
 }
 
 final class TicketTypeFailUre extends TicketTypeState {

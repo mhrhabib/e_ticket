@@ -18,8 +18,15 @@ class UserCubit extends Cubit<UserState> {
     final users = await getUsersUseCase.execute();
     users.fold(
       (failure) => emit(UserFailUre(_mapFailureToMessage(failure))),
-      (user) => emit(UserSuccess(user)),
+      (user) => emit(UserSuccess(user, null)),
     );
+  }
+
+  void selectUser(User selectedUser) {
+    if (state is UserSuccess) {
+      final currentState = state as UserSuccess;
+      emit(UserSuccess(currentState.users, selectedUser)); // Update selectedUser
+    }
   }
 
   String _mapFailureToMessage(Failure failure) {

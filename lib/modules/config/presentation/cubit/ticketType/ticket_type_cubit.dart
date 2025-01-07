@@ -15,8 +15,15 @@ class TicketTypeCubit extends Cubit<TicketTypeState> {
     final ticketTypes = await getTicketTypeUsecase.execute();
     ticketTypes.fold(
       (failure) => emit(TicketTypeFailUre(_mapFailureToMessage(failure))),
-      (tickets) => emit(TicketTypeSuccess(tickets)),
+      (tickets) => emit(TicketTypeSuccess(tickets, null)),
     );
+  }
+
+  void selectType(TicketType selectedType) {
+    if (state is TicketTypeSuccess) {
+      final currentState = state as TicketTypeSuccess;
+      emit(TicketTypeSuccess(currentState.ticketTypes, selectedType));
+    }
   }
 
   String _mapFailureToMessage(Failure failure) {

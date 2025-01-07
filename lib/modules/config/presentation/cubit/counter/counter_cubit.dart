@@ -16,8 +16,15 @@ class CounterCubit extends Cubit<CounterState> {
     final counters = await getCountersUsecase.execute();
     counters.fold(
       (failure) => emit(CounterFailure(_mapFailureToMessage(failure))),
-      (counters) => emit(CounterSuccess(counters)),
+      (counters) => emit(CounterSuccess(counters, null)),
     );
+  }
+
+  void selectCounter(Counter selectedCounter) {
+    if (state is CounterSuccess) {
+      final currentState = state as CounterSuccess;
+      emit(CounterSuccess(currentState.counters, selectedCounter)); // Update selectedUser
+    }
   }
 
   String _mapFailureToMessage(Failure failure) {

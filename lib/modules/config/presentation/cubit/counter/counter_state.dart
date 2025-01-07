@@ -13,8 +13,8 @@ final class CounterLoading extends CounterState {}
 
 final class CounterSuccess extends CounterState {
   final List<Counter> counters;
-
-  const CounterSuccess(this.counters);
+  final Counter? counter;
+  const CounterSuccess(this.counters, this.counter);
 }
 
 final class CounterFailure extends CounterState {

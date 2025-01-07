@@ -13,7 +13,8 @@ final class UserLoading extends UserState {}
 
 final class UserSuccess extends UserState {
   final List<User> users;
-  const UserSuccess(this.users);
+  final User? selectedUser;
+  const UserSuccess(this.users, this.selectedUser);
 }
 
 final class UserFailUre extends UserState {
