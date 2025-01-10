@@ -39,10 +39,9 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 20,
               children: [
-                Icon(
-                  Icons.spa_outlined,
-                  size: 60,
-                  color: ColorsPalate.primaryColor,
+                Image.asset(
+                  'assets/logo.png',
+                  height: 80,
                 ),
                 SizedBox(height: 50),
                 CustomTextFormField(

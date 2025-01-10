@@ -20,9 +20,20 @@ class AuthRepositoryImpl implements AuthRepository {
         name: loginModel.data?.user?.name ?? '',
         email: loginModel.data?.user?.email ?? '',
         token: loginModel.data?.token ?? '',
+        ticketCounterId: loginModel.data!.user!.ticketCounterId!,
       );
 
       return Right(userEntity);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> logOut() async {
+    try {
+      final result = await remoteDataSource.logOut();
+      return Right(result);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

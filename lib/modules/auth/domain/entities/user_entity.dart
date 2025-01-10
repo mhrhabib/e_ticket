@@ -3,6 +3,7 @@ class UserEntity {
   final String name;
   final String email;
   final String token;
+  final int ticketCounterId;
 
-  UserEntity({required this.id, required this.name, required this.email, required this.token});
+  UserEntity({required this.id, required this.name, required this.email, required this.token, required this.ticketCounterId});
 }

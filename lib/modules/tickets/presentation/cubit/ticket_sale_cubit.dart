@@ -1,4 +1,5 @@
 import 'package:e_ticket/core/errors/failure.dart';
+import 'package:e_ticket/modules/tickets/data/models/ticket_fare_model.dart';
 import 'package:e_ticket/modules/tickets/data/models/ticket_sale_model.dart';
 import 'package:e_ticket/modules/tickets/data/models/tickets_model.dart';
 import 'package:e_ticket/modules/tickets/domain/usecase/ticket_sale_usecase.dart';
@@ -10,7 +11,9 @@ part 'ticket_sale_state.dart';
 class TicketSaleCubit extends Cubit<TicketSaleState> {
   final TicketSaleUsecase ticketSaleUsecase;
 
-  TicketSaleCubit({required this.ticketSaleUsecase}) : super(TicketSaleInitial());
+  TicketSaleCubit({required this.ticketSaleUsecase}) : super(TicketSaleInitial()) {
+    loadTicketFareList();
+  }
 
   Future<void> loadTicketSaleList() async {
     emit(TicketSaleLoading());
@@ -21,13 +24,25 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
     );
   }
 
+  Future<void> loadTicketFareList() async {
+    emit(TicketSaleLoading());
+    final response = await ticketSaleUsecase.getTicketFare();
+    response.fold(
+      (failure) => emit(TicketSaleFailed(_mapFailureToMessage(failure))),
+      (ticket) => emit(TicketFareSuccess(ticketFareModel: ticket)),
+    );
+  }
+
   Future<void> addTicketSale(
       {required int userId, required int ticketRouteId, required int fromTicketCounterId, required int toTicketCounterId, required String type, required double price, required bool isAdvanced, required int deviceId, String? journeyDate}) async {
     emit(TicketSaleLoading());
 
     final response = await ticketSaleUsecase.call(
         userId: userId, ticketRouteId: ticketRouteId, fromTicketCounterId: fromTicketCounterId, toTicketCounterId: toTicketCounterId, type: type, price: price, isAdvanced: isAdvanced, deviceId: deviceId, journeyDate: journeyDate!);
-    response.fold((failed) => emit(TicketSaleFailed(_mapFailureToMessage(failed))), (ticket) => emit(TicketSaleSuccess(ticket)));
+    response.fold(
+      (failed) => emit(TicketSaleFailed(_mapFailureToMessage(failed))),
+      (ticket) => emit(TicketSaleSuccess(ticket)),
+    );
   }
 
   String _mapFailureToMessage(Failure failure) {

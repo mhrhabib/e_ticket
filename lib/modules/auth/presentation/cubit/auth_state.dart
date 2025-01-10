@@ -25,6 +25,11 @@ class AuthSuccess extends AuthState {
   List<Object?> get props => [user];
 }
 
+class AuthLogOutSuccess extends AuthState {
+  final Map<String, dynamic> status;
+  const AuthLogOutSuccess(this.status);
+}
+
 class AuthFailure extends AuthState {
   final String errorMessage;
 

@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => sl<TicketTypeCubit>()..loadTicketTypes()),
         BlocProvider(create: (context) => sl<TicketRouteCubit>()..loadTicketRoutes()),
         BlocProvider(create: (context) => sl<ProfileCubit>()..loadProfilesData()),
-        BlocProvider(create: (context) => sl<TicketSaleCubit>()..loadTicketSaleList()),
+        BlocProvider(create: (context) => sl<TicketSaleCubit>()..loadTicketFareList()),
         BlocProvider(create: (context) => sl<TicketPriceCubit>()),
       ],
       child: MaterialApp(

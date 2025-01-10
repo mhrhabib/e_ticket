@@ -1,11 +1,6 @@
-import 'package:e_ticket/core/common/widgets/custom_dropdown.dart';
-import 'package:e_ticket/core/common/widgets/custom_dropdown_shimmer.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
-import 'package:e_ticket/modules/config/presentation/cubit/counter/counter_cubit.dart';
-import 'package:e_ticket/modules/config/presentation/cubit/ticketRoutes/ticket_route_cubit.dart';
-import 'package:e_ticket/modules/config/presentation/cubit/ticketRoutes/ticket_route_state.dart';
-import 'package:e_ticket/modules/config/presentation/cubit/ticketType/ticket_type_cubit.dart';
-import 'package:e_ticket/modules/config/presentation/cubit/user/user_cubit.dart';
+import 'package:e_ticket/modules/auth/presentation/cubit/auth_cubit.dart';
+import 'package:e_ticket/modules/auth/presentation/pages/login_page.dart';
 import 'package:e_ticket/modules/counters/counters_list_page.dart';
 import 'package:e_ticket/modules/profile/presentation/pages/profile_page.dart';
 import 'package:e_ticket/modules/tickets/presentation/cubit/ticket_sale_cubit.dart';
@@ -14,8 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import '../../../config/presentation/cubit/ticketPrice/ticket_price_cubit.dart';
-import '../../../config/presentation/cubit/ticketPrice/ticket_price_state.dart';
+import 'widgets/build_ticket_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,6 +19,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int selectedRoute = 1; // Initially select Route-01
+
   int? selectedUserId;
   int? selectedRouteId;
   int? selectedCounterId;
@@ -35,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.microtask(() => context.read<CounterCubit>().loadCounters());
+      context.read<TicketSaleCubit>().loadTicketFareList();
     });
 
     super.initState();
@@ -58,6 +54,8 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+
+  bool isStudent = false; // To track whether the student fee is applied
 
   @override
   Widget build(BuildContext context) {
@@ -90,10 +88,9 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             spacing: 20,
             children: [
-              Icon(
-                Icons.spa_outlined,
-                size: 60,
-                color: ColorsPalate.primaryColor,
+              Image.asset(
+                'assets/logo.png',
+                height: 50,
               ),
               ListTile(
                 leading: Icon(Icons.dashboard_outlined),
@@ -108,367 +105,173 @@ class _HomePageState extends State<HomePage> {
                 title: Text('Counters', style: TextStyle(fontSize: 18)),
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => CountersListPage())),
               ),
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text('LogOut', style: TextStyle(fontSize: 18)),
+                onTap: () {
+                  context.read<AuthCubit>().logOut().then((_) {
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
+                      return true;
+                    });
+                  });
+                },
+              ),
             ],
           ),
         ),
       ),
-      body: Column(
-        spacing: 10,
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 12.0, top: 12),
-              child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Text('User'),
-                Gap(2),
-                Text(
-                  '*',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ]),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 12, right: 12),
-            child: BlocBuilder<UserCubit, UserState>(
-              builder: (context, state) {
-                if (state is UserLoading) {
-                  return const CustomDropdownShimmer();
-                }
-                if (state is UserFailUre) {
-                  return const Text('No item');
-                }
-                if (state is UserSuccess) {
-                  return CustomDropdown<String>(
-                    value: state.selectedUser?.name, // Use selectedUser's name
-                    items: state.users.map((user) => user.name!).toList(),
-                    onChanged: (selectedName) {
-                      final selectedUser = state.users.firstWhere((user) => user.name == selectedName);
-                      context.read<UserCubit>().selectUser(selectedUser); // Update selectedUser
-                      setState(() {
-                        selectedUserId = selectedUser.id;
-                        fromTicketCounterId = selectedUser.ticketCounterId!;
-                      });
-                    },
-                    hintText: 'name',
-                    labelText: 'Select User',
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 12.0, top: 12),
-              child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Text('Routes'),
-                Gap(2),
-                Text(
-                  '*',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ]),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 12, right: 12),
-            child: BlocBuilder<TicketRouteCubit, TicketRouteState>(
-              builder: (context, state) {
-                if (state is TicketRouteLoading) {
-                  return const CustomDropdownShimmer();
-                }
-                if (state is TicketRouteFailUre) {
-                  return const Text('No item');
-                }
-                if (state is TicketRouteSuccess) {
-                  return CustomDropdown<String>(
-                    value: state.ticketRoute?.name, // Use selectedUser's name
-                    items: state.ticketRoutes.map((user) => user.name!).toList(),
-                    onChanged: (selectedName) {
-                      final selectedRoute = state.ticketRoutes.firstWhere((user) => user.name == selectedName);
-                      context.read<TicketRouteCubit>().selectRoute(selectedRoute); // Update selectedUser
-                      setState(() {
-                        selectedRouteId = selectedRoute.id;
-                      });
-                    },
-                    hintText: 'name',
-                    labelText: 'Select route',
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 12.0, top: 12),
-              child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Text('To Ticket Counter'),
-                Gap(2),
-                Text(
-                  '*',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ]),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 12, right: 12),
-            child: BlocBuilder<CounterCubit, CounterState>(
-              builder: (context, state) {
-                if (state is CounterLoading) {
-                  return const CustomDropdownShimmer();
-                }
-                if (state is CounterFailure) {
-                  return const Text('No item');
-                }
-                if (state is CounterSuccess) {
-                  return CustomDropdown<String>(
-                    value: state.counter?.name, // Use selectedUser's name
-                    items: state.counters.map((user) => user.name!).toList(),
-                    onChanged: (selectedName) {
-                      final selectedRoute = state.counters.firstWhere((user) => user.name == selectedName);
-                      context.read<CounterCubit>().selectCounter(selectedRoute); // Update selectedUser
-                      setState(() {
-                        selectedCounterId = selectedRoute.id;
-                      });
-                    },
-                    hintText: 'name',
-                    labelText: 'Select counter',
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 12.0, top: 12),
-              child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                Text('Type'),
-                Gap(2),
-                Text(
-                  '*',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ]),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 12, right: 12),
-            child: BlocBuilder<TicketTypeCubit, TicketTypeState>(
-              builder: (context, state) {
-                if (state is TicketTypeLoading) {
-                  return const CustomDropdownShimmer();
-                }
-                if (state is TicketTypeFailUre) {
-                  return const Text('No item');
-                }
-                if (state is TicketTypeSuccess) {
-                  return CustomDropdown<String>(
-                    value: state.ticketType?.name, // Use selectedUser's name
-                    items: state.ticketTypes.map((user) => user.name!).toList(),
-                    onChanged: (selectedName) {
-                      final selectedRoute = state.ticketTypes.firstWhere((user) => user.name == selectedName);
-                      context.read<TicketTypeCubit>().selectType(selectedRoute); // Update selectedUser
-                      setState(() {
-                        selectedType = selectedRoute.name;
-                        selectedUserId != null && selectedRouteId != null && selectedCounterId != null && selectedType != null
-                            ? context.read<TicketPriceCubit>().fetchTicketPrice(
-                                  userId: selectedUserId.toString(),
-                                  ticketRouteId: selectedRouteId.toString(),
-                                  toCounterId: selectedCounterId.toString(),
-                                  type: selectedType!,
-                                )
-                            : null;
-                      });
-                    },
-                    hintText: 'name',
-                    labelText: 'Select type',
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: BlocConsumer<TicketSaleCubit, TicketSaleState>(
+        // bloc: TicketSaleCubit(ticketSaleUsecase: sl())..loadTicketFareList(),
+        listener: (context, state) {
+          if (state is TicketSaleSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Ticket sale successful!')),
+            );
+            // Trigger to reload the fare list
+            context.read<TicketSaleCubit>().loadTicketFareList();
+          }
+        },
+        builder: (context, state) {
+          if (state is TicketSaleLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is TicketSaleFailed) {
+            return Center(
+              child: Text(state.message),
+            );
+          }
+          if (state is TicketFareSuccess) {
+            final counters = state.ticketFareModel.prices;
+
+            final route1 = counters!.where((e) => e.routeId == 1).toList();
+            final route2 = counters.where((e) => e.routeId == 2).toList();
+
+            return Column(
+              spacing: 10,
               children: [
-                const Text('Is Advanced', style: TextStyle(fontSize: 16)),
-                Checkbox(
-                  value: isAdvanced,
-                  onChanged: (value) {
-                    setState(() {
-                      isAdvanced = value!;
-                      if (!isAdvanced) {
-                        selectedDate = null; // Reset date if not advanced
-                      }
-                    });
-                  },
+                Gap(8),
+                FittedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Gap(8),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: selectedRoute == 1 ? ColorsPalate.primaryColor : Colors.grey.shade300,
+                          foregroundColor: selectedRoute == 1 ? Colors.white : Colors.black,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            selectedRoute = 1;
+                          });
+                        },
+                        child: Text('Route-01'),
+                      ),
+                      SizedBox(width: 8),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: selectedRoute == 2 ? ColorsPalate.primaryColor : Colors.grey.shade300,
+                          foregroundColor: selectedRoute == 2 ? Colors.white : Colors.black,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            selectedRoute = 2;
+                          });
+                        },
+                        child: Text('Route-02'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Student Fee', style: TextStyle(fontSize: 16)),
+                            Checkbox(
+                              value: isStudent,
+                              onChanged: (value) {
+                                setState(() {
+                                  isStudent = value!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-          if (isAdvanced)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    selectedDate ?? 'Select Journey Date',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: selectedDate == null ? Colors.grey : Colors.black,
-                    ),
+                const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Advanced', style: TextStyle(fontSize: 16)),
+                      Checkbox(
+                        value: isAdvanced,
+                        onChanged: (value) {
+                          setState(() {
+                            isAdvanced = value!;
+                            if (!isAdvanced) {
+                              selectedDate = null; // Reset date if not advanced
+                            }
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                    onPressed: () => _selectDate(context),
-                    child: const Text('Pick Date'),
-                  ),
-                ],
-              ),
-            ),
-          SizedBox(
-            height: 80,
-            child: BlocBuilder<TicketPriceCubit, TicketPriceState>(
-              builder: (context, state) {
-                if (state is TicketPriceLoading) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (state is TicketPriceLoaded) {
-                  price = state.price.price!.toStringAsFixed(2);
-                  return Container(
-                    margin: EdgeInsets.all(12),
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10.0,
-                          offset: Offset(0, 5),
+                ),
+                if (isAdvanced)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          selectedDate ?? 'Select Journey Date',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: selectedDate == null ? Colors.grey : Colors.black,
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorsPalate.secondaryColor,
+                            foregroundColor: ColorsPalate.onPrimaryColor,
+                          ),
+                          onPressed: () => _selectDate(context),
+                          child: const Text('Pick Date'),
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        'Price: \$${state.price.price!.toStringAsFixed(2)}',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  );
-                }
-                if (state is TicketPriceError) {
-                  return Center(
-                    child: Text(
-                      state.message,
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  );
-                }
-                return Center(child: Text('Select options to calculate price'));
-              },
-            ),
-          ),
-          BlocConsumer<TicketSaleCubit, TicketSaleState>(
-            listener: (context, state) {
-              if (state is TicketSaleSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Ticket added successfully!')),
-                );
-                setState(() {
-                  selectedUserId = null;
-                  selectedRouteId = null;
-                  selectedCounterId = null;
-                  selectedType = null;
-                  fromTicketCounterId = null;
-                  price = null;
-                  isAdvanced = false;
-                  selectedDate = null;
-                  _resetAllSelections();
-                });
-              } else if (state is TicketSaleFailed) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
-                );
-              }
-            },
-            builder: (context, state) {
-              if (state is TicketSaleLoading) {
-                return const CircularProgressIndicator();
-              }
-              return ElevatedButton(
-                onPressed: () {
-                  if (isAdvanced && selectedDate == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please select a journey date'),
-                      ),
-                    );
-                    return;
-                  }
-
-                  if (selectedUserId != null && selectedRouteId != null && selectedCounterId != null && selectedType != null && fromTicketCounterId != null) {
-                    context.read<TicketSaleCubit>().addTicketSale(
-                          userId: selectedUserId!,
-                          ticketRouteId: selectedRouteId!,
-                          fromTicketCounterId: fromTicketCounterId!,
-                          toTicketCounterId: selectedCounterId!,
-                          type: selectedType!,
-                          price: double.parse(price!),
-                          isAdvanced: isAdvanced ? true : false,
-                          deviceId: 1,
-                          journeyDate: isAdvanced ? selectedDate : '',
-                        );
-                  }
-                },
-                child: const Text('Add Ticket'),
-              );
-            },
-          ),
-        ],
+                  ),
+                Expanded(
+                  child: selectedRoute == 1
+                      ? buildTicketList(
+                          context: context,
+                          isAdvanced: isAdvanced,
+                          isStudent: isStudent,
+                          items: route1,
+                          selectedDate: selectedDate,
+                        )
+                      : buildTicketList(
+                          context: context,
+                          isAdvanced: isAdvanced,
+                          isStudent: isStudent,
+                          items: route2,
+                          selectedDate: selectedDate,
+                        ),
+                ),
+              ],
+            );
+          }
+          return Center(
+            child: Text('data'),
+          );
+        },
       ),
     );
-  }
-
-  void _resetAllSelections() {
-    // Reset selected user
-    context.read<UserCubit>().resetUser();
-    context.read<UserCubit>().loadUsers();
-    selectedUserId = null;
-
-    // Reset selected route
-    context.read<TicketRouteCubit>().resetRoute();
-    context.read<TicketRouteCubit>().loadTicketRoutes();
-    selectedRouteId = null;
-
-    // Reset selected counter
-    context.read<CounterCubit>().resetCounter();
-    context.read<CounterCubit>().loadCounters();
-    selectedCounterId = null;
-
-    // Reset ticket type
-    context.read<TicketTypeCubit>().resetType();
-    context.read<TicketTypeCubit>().loadTicketTypes();
-    selectedType = null;
-
-    // Reset ticket price
-    context.read<TicketPriceCubit>().resetPrice();
-    price = null;
-
-    // Reset advanced options
-    isAdvanced = false;
-    selectedDate = null;
-
-    setState(() {}); // Update UI
   }
 }

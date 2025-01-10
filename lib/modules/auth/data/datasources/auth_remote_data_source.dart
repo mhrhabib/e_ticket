@@ -1,12 +1,16 @@
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:e_ticket/core/common/helper/base_client.dart';
+import 'package:e_ticket/core/common/helper/storage.dart';
+import 'package:e_ticket/core/utils/urls.dart';
 import '../models/login_model.dart';
 
 abstract class AuthRemoteDataSource {
   Future<LoginModel> login(String email, String password);
+  Future<Map<String, dynamic>> logOut();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final Dio client;
+  final dio.Dio client;
 
   AuthRemoteDataSourceImpl({required this.client});
 
@@ -22,6 +26,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return LoginModel.fromJson(response.data);
     } else {
       throw Exception('Failed to login');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> logOut() async {
+    dio.Response response = await BaseClient.post(url: "${Urls.baseUrl}/logout");
+    if (response.statusCode == 200) {
+      storage.remove('token');
+      return response.data;
+    } else {
+      throw Exception('Failed to logout');
     }
   }
 }

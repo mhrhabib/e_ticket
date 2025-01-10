@@ -11,4 +11,8 @@ class LoginUseCase {
   Future<Either<Failure, UserEntity>> execute(String email, String password) {
     return repository.login(email, password);
   }
+
+  Future<Either<Failure, Map<String, dynamic>>> logOut() {
+    return repository.logOut();
+  }
 }

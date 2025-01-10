@@ -18,8 +18,19 @@ class AuthCubit extends Cubit<AuthState> {
       (failure) => emit(AuthFailure(_mapFailureToMessage(failure))),
       (user) {
         emit(AuthSuccess(user));
+        storage.write('userId', user.id);
         storage.write('token', user.token);
+        storage.write('counterId', user.ticketCounterId);
       },
+    );
+  }
+
+  Future logOut() async {
+    emit(const AuthLoading());
+    final result = await loginUseCase.logOut();
+    result.fold(
+      (failure) => emit(AuthFailure(_mapFailureToMessage(failure))),
+      (user) => emit(AuthLogOutSuccess(user)),
     );
   }
 

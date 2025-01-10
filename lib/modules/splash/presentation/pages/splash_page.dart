@@ -3,8 +3,6 @@ import 'package:e_ticket/modules/auth/presentation/pages/login_page.dart';
 import 'package:e_ticket/modules/home/presentation/page/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:e_ticket/core/utils/colors_palate.dart';
-
 import '../cubit/splash_cubit.dart';
 import '../cubit/splash_state.dart';
 
@@ -39,12 +37,10 @@ class SplashPage extends StatelessWidget {
       },
       child: Scaffold(
         body: Center(
-          child: Icon(
-            Icons.spa,
-            color: ColorsPalate.primaryColor,
-            size: 60,
-          ),
-        ),
+            child: Image.asset(
+          'assets/logo.png',
+          height: 80,
+        )),
       ),
     );
   }
