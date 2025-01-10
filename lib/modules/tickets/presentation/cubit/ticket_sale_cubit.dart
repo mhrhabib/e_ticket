@@ -33,15 +33,37 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
     );
   }
 
-  Future<void> addTicketSale(
-      {required int userId, required int ticketRouteId, required int fromTicketCounterId, required int toTicketCounterId, required String type, required double price, required bool isAdvanced, required int deviceId, String? journeyDate}) async {
+  Future<void> addTicketSale({
+    required int userId,
+    required int ticketRouteId,
+    required int fromTicketCounterId,
+    required int toTicketCounterId,
+    required String type,
+    required double price,
+    required bool isAdvanced,
+    required int deviceId,
+    String? journeyDate,
+  }) async {
     emit(TicketSaleLoading());
 
     final response = await ticketSaleUsecase.call(
-        userId: userId, ticketRouteId: ticketRouteId, fromTicketCounterId: fromTicketCounterId, toTicketCounterId: toTicketCounterId, type: type, price: price, isAdvanced: isAdvanced, deviceId: deviceId, journeyDate: journeyDate!);
+      userId: userId,
+      ticketRouteId: ticketRouteId,
+      fromTicketCounterId: fromTicketCounterId,
+      toTicketCounterId: toTicketCounterId,
+      type: type,
+      price: price,
+      isAdvanced: isAdvanced,
+      deviceId: deviceId,
+      journeyDate: journeyDate!,
+    );
     response.fold(
-      (failed) => emit(TicketSaleFailed(_mapFailureToMessage(failed))),
-      (ticket) => emit(TicketSaleSuccess(ticket)),
+      (failure) => emit(TicketSaleFailed(_mapFailureToMessage(failure))),
+      (ticket) {
+        emit(TicketSaleSuccess(ticket));
+        // Reset to initial state after emitting success
+        emit(TicketSaleInitial());
+      },
     );
   }
 
