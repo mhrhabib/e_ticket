@@ -41,7 +41,10 @@ class TicketSaleCubit extends Cubit<TicketSaleState> {
         userId: userId, ticketRouteId: ticketRouteId, fromTicketCounterId: fromTicketCounterId, toTicketCounterId: toTicketCounterId, type: type, price: price, isAdvanced: isAdvanced, deviceId: deviceId, journeyDate: journeyDate!);
     response.fold(
       (failed) => emit(TicketSaleFailed(_mapFailureToMessage(failed))),
-      (ticket) => emit(TicketSaleSuccess(ticket)),
+      (ticket) {
+        emit(TicketSaleSuccess(ticket));
+        emit(TicketSaleInitial());
+      },
     );
   }
 

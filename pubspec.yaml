@@ -46,6 +46,7 @@ dependencies:
   shimmer: ^3.0.0
   intl: ^0.20.1
   flutter_native_splash: ^2.4.4
+  sunmi_printer_plus: ^4.1.0
 
 dev_dependencies:
   flutter_test:
