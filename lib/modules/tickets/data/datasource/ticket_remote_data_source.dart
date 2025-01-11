@@ -4,6 +4,7 @@ import 'package:e_ticket/core/utils/urls.dart';
 import 'package:e_ticket/modules/tickets/data/models/ticket_fare_model.dart';
 import 'package:e_ticket/modules/tickets/data/models/ticket_sale_model.dart';
 import 'package:e_ticket/modules/tickets/data/models/tickets_model.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class TicketRemoteDataSource {
   Future<TicketsModel> getTicketsList();
@@ -74,14 +75,33 @@ class TicketRemoteDataSourceImpl extends TicketRemoteDataSource {
 
   @override
   Future<TicketFareModel> getTicketFare() async {
+    final box = Hive.box<TicketFareModel>('fareBox');
     try {
       final response = await BaseClient.post(url: '${Urls.baseUrl}/admin/ticketfare');
-      return TicketFareModel.fromJson(response.data);
+
+      // Save the data to Hive
+      final ticketFareModel = TicketFareModel.fromJson(response.data);
+      box.put('fareData', ticketFareModel);
+
+      return ticketFareModel;
     } on ClientException catch (e) {
+      // Return cached data if available
+      final cachedData = box.get('fareData');
+      if (cachedData != null) {
+        return cachedData;
+      }
       throw ValidationFailure(message: e.message);
     } on ServerException catch (e) {
+      final cachedData = box.get('fareData');
+      if (cachedData != null) {
+        return cachedData;
+      }
       throw ServerFailure(message: e.message);
     } catch (e) {
+      final cachedData = box.get('fareData');
+      if (cachedData != null) {
+        return cachedData;
+      }
       throw NetworkFailure(message: 'Unexpected error: $e');
     }
   }

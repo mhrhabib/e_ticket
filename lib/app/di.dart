@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:e_ticket/core/common/helper/sale_service.dart';
 import 'package:e_ticket/core/utils/urls.dart';
 import 'package:e_ticket/modules/config/data/datasources/config_remote_data_source.dart';
 import 'package:e_ticket/modules/config/data/repository/counter_repository_impl.dart';
@@ -60,7 +61,7 @@ void setup() {
 
   // Cubits
   sl.registerFactory(() => AuthCubit(loginUseCase: sl()));
-  sl.registerFactory(() => SplashCubit());
+  sl.registerFactory(() => SplashCubit(SaleService()));
 
   //configs
   sl.registerLazySingleton<ConfigRemoteDataSource>(

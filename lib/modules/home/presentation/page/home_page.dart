@@ -1,10 +1,8 @@
 import 'package:e_ticket/core/utils/colors_palate.dart';
 import 'package:e_ticket/modules/auth/presentation/cubit/auth_cubit.dart';
 import 'package:e_ticket/modules/auth/presentation/pages/login_page.dart';
-import 'package:e_ticket/modules/counters/counters_list_page.dart';
 import 'package:e_ticket/modules/profile/presentation/pages/profile_page.dart';
 import 'package:e_ticket/modules/tickets/presentation/cubit/ticket_sale_cubit.dart';
-import 'package:e_ticket/modules/tickets/presentation/pages/tickets_sale_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -30,9 +28,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TicketSaleCubit>().loadTicketFareList();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   context.read<TicketSaleCubit>().loadTicketFareList();
+    // });
 
     super.initState();
   }
@@ -92,19 +90,19 @@ class _HomePageState extends State<HomePage> {
                 'assets/logo.png',
                 height: 50,
               ),
-              ListTile(
-                leading: Icon(Icons.dashboard_outlined),
-                title: Text(
-                  'Ticket sale list',
-                  style: TextStyle(fontSize: 18),
-                ),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => TicketsSaleListPage())),
-              ),
-              ListTile(
-                leading: Icon(Icons.bus_alert),
-                title: Text('Counters', style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => CountersListPage())),
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.dashboard_outlined),
+              //   title: Text(
+              //     'Ticket sale list',
+              //     style: TextStyle(fontSize: 18),
+              //   ),
+              //   onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => TicketsSaleListPage())),
+              // ),
+              // ListTile(
+              //   leading: Icon(Icons.bus_alert),
+              //   title: Text('Counters', style: TextStyle(fontSize: 18)),
+              //   onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => CountersListPage())),
+              // ),
               ListTile(
                 leading: Icon(Icons.logout),
                 title: Text('LogOut', style: TextStyle(fontSize: 18)),

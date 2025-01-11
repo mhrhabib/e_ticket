@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class TicketSaleItem extends StatelessWidget {
   final Ticket ticketData;
 
-  const TicketSaleItem({Key? key, required this.ticketData}) : super(key: key);
+  const TicketSaleItem({super.key, required this.ticketData});
 
   @override
   Widget build(BuildContext context) {

@@ -1,22 +1,28 @@
-import 'package:e_ticket/app/di.dart';
-import 'package:e_ticket/core/common/helper/storage.dart';
-import 'package:e_ticket/modules/config/presentation/cubit/counter/counter_cubit.dart';
+import 'package:e_ticket/core/common/helper/sale_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'splash_state.dart';
 
 class SplashCubit extends Cubit<SplashState> {
-  SplashCubit() : super(const SplashInitial());
+  final SaleService saleService;
+
+  SplashCubit(this.saleService) : super(const SplashInitial());
 
   Future<void> initializeApp() async {
     emit(const SplashLoading());
-    print(storage.read('token'));
+
+    print("Splashh>>>>>>>>>>>>>>>>>>>>>>>>>");
 
     try {
-      // Simulate API call or initialization logic
-      CounterCubit(sl()).loadCounters();
-      await Future.delayed(const Duration(seconds: 3));
+      // Check if there are sales to post
+      final salesList = await saleService.getSalesFromHive();
 
-      // After successful loading
+      if (salesList.isNotEmpty) {
+        await saleService.postSales(salesList);
+      } else {
+        print("Empty sale list **********************");
+      }
+
+      // Continue to home or login screen
       emit(const SplashSuccess());
     } catch (e) {
       emit(SplashFailure('Failed to initialize app: $e'));

@@ -120,6 +120,16 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
+                    // ElevatedButton(
+                    //   onPressed: () async {
+                    //     // Get sales from Hive
+                    //     List<SaleModel> salesList = await SaleService().getSalesFromHive();
+
+                    //     // Call API to post sales
+                    //     await ApiService().postSales(salesList);
+                    //   },
+                    //   child: Text('Post Sales to API'),
+                    // ),
                   ],
                 ),
               ),
