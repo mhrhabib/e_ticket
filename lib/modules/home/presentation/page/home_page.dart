@@ -1,8 +1,6 @@
 import 'package:e_ticket/core/common/helper/sale_service.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
-import 'package:e_ticket/modules/auth/presentation/cubit/auth_cubit.dart';
-import 'package:e_ticket/modules/auth/presentation/pages/login_page.dart';
-import 'package:e_ticket/modules/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:e_ticket/modules/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:e_ticket/modules/profile/presentation/pages/profile_page.dart';
 import 'package:e_ticket/modules/tickets/presentation/cubit/ticket_sale_cubit.dart';
 import 'package:flutter/material.dart';
@@ -72,6 +70,10 @@ class _HomePageState extends State<HomePage> {
             print("Empty sale list **********************");
           }
         }
+        if (mounted) {
+          Future.microtask(() => context.read<DashboardCubit>().loadDashboardData());
+        }
+        // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => DashboardScreen()));
       },
       child: Scaffold(
         appBar: AppBar(
@@ -96,54 +98,6 @@ class _HomePageState extends State<HomePage> {
             ),
             Gap(12),
           ],
-        ),
-        drawer: Drawer(
-          child: SafeArea(
-            child: Column(
-              spacing: 4,
-              children: [
-                Image.asset(
-                  'assets/logo.png',
-                  height: 50,
-                ),
-                Gap(12),
-                Text(
-                  'HR Transports ltd.',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                ),
-                ListTile(
-                  leading: Icon(Icons.dashboard_outlined),
-                  title: Text(
-                    'Dashboard',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardScreen())),
-                ),
-                ListTile(
-                  leading: Icon(Icons.person_4_outlined),
-                  title: Text('Profile', style: TextStyle(fontSize: 18)),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfilePage())),
-                ),
-                ListTile(
-                  leading: Icon(Icons.logout),
-                  title: Text('LogOut', style: TextStyle(fontSize: 18)),
-                  onTap: () async {
-                    final salesList = await saleService.getSalesFromHive();
-                    if (salesList.isNotEmpty) {
-                      await saleService.postSales(salesList);
-                    } else {
-                      print("Empty sale list **********************");
-                    }
-                    context.read<AuthCubit>().logOut().then((_) {
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
-                        return true;
-                      });
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
         ),
         body: BlocConsumer<TicketSaleCubit, TicketSaleState>(
           // bloc: TicketSaleCubit(ticketSaleUsecase: sl())..loadTicketFareList(),

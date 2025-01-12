@@ -1,9 +1,8 @@
 import 'package:e_ticket/core/utils/colors_palate.dart';
+import 'package:e_ticket/modules/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../core/common/widgets/custom_text_field.dart';
-import '../../../home/presentation/page/home_page.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
@@ -21,7 +20,7 @@ class LoginPage extends StatelessWidget {
         listener: (context, state) {
           if (state is AuthSuccess) {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return HomePage();
+              return DashboardScreen();
             }));
           }
           if (state is AuthFailure) {

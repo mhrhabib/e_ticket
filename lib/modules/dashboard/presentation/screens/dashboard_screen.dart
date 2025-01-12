@@ -1,7 +1,9 @@
-import 'package:e_ticket/app/di.dart';
+import 'package:e_ticket/core/common/helper/sale_service.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
+import 'package:e_ticket/modules/auth/presentation/cubit/auth_cubit.dart';
 import 'package:e_ticket/modules/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:e_ticket/modules/home/presentation/page/home_page.dart';
+import 'package:e_ticket/modules/profile/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -10,8 +12,48 @@ import 'package:sunmi_printer_plus/core/styles/sunmi_text_style.dart';
 import 'package:sunmi_printer_plus/core/sunmi/sunmi_printer.dart';
 import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 
-class DashboardScreen extends StatelessWidget {
+import '../../../auth/presentation/pages/login_page.dart';
+
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    setState(() {
+      context.read<DashboardCubit>().loadDashboardData();
+    }); // Initial API call
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Call the API when the app comes back to the foreground
+      setState(() {
+        context.read<DashboardCubit>().loadDashboardData();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  final SaleService saleService = SaleService();
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +65,63 @@ class DashboardScreen extends StatelessWidget {
           style: TextStyle(color: ColorsPalate.onPrimaryColor),
         ),
       ),
+      drawer: Drawer(
+        child: SafeArea(
+          child: Column(
+            spacing: 4,
+            children: [
+              Image.asset(
+                'assets/logo.png',
+                height: 50,
+              ),
+              Gap(12),
+              Text(
+                'HR Transports ltd.',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              ),
+              ListTile(
+                leading: Icon(Icons.dashboard_outlined),
+                title: Text(
+                  'Dashboard',
+                  style: TextStyle(fontSize: 18),
+                ),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardScreen())),
+              ),
+              ListTile(
+                leading: Icon(Icons.person_4_outlined),
+                title: Text('Profile', style: TextStyle(fontSize: 18)),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfilePage())),
+              ),
+              ListTile(
+                leading: Icon(Icons.bus_alert),
+                title: Text('Sale Ticket'),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text('LogOut', style: TextStyle(fontSize: 18)),
+                onTap: () async {
+                  final salesList = await saleService.getSalesFromHive();
+                  if (salesList.isNotEmpty) {
+                    await saleService.postSales(salesList);
+                  } else {
+                    print("Empty sale list **********************");
+                  }
+                  context.read<AuthCubit>().logOut().then((_) {
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
+                      return true;
+                    });
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
       body: BlocBuilder<DashboardCubit, DashboardState>(
-          bloc: DashboardCubit(dashboardUsecase: sl()),
+          bloc: context.read<DashboardCubit>()..loadDashboardData(),
           builder: (context, state) {
             if (state is DashboardLoading) {
               return Center(
@@ -45,17 +142,45 @@ class DashboardScreen extends StatelessWidget {
                 children: [
                   Wrap(
                     children: [
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: OutlinedButton.icon(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
-                              },
-                              icon: Icon(Icons.bus_alert),
-                              label: Text('Sale Ticket')),
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Gap(12),
+                              IconButton(
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: Colors.amber,
+                                  ),
+                                  onPressed: () async {
+                                    await context.read<DashboardCubit>().loadDashboardData();
+                                  },
+                                  icon: Icon(
+                                    Icons.refresh,
+                                    size: 32,
+                                  )),
+                              Gap(12),
+                              Text(
+                                'Refresh',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: OutlinedButton.icon(
+                                  onPressed: () {
+                                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
+                                  },
+                                  icon: Icon(Icons.bus_alert),
+                                  label: Text('Sale Ticket')),
+                            ),
+                          ),
+                        ],
                       ),
                       _buildTicketCountsWidget(context, count!.totaltickets.toString(), 'Total Tickets'),
                       _buildTicketCountsWidget(context, count.totalticketfare.toString(), 'Total Tickets Fare'),
