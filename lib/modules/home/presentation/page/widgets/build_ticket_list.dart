@@ -75,10 +75,13 @@ Widget buildTicketList({
               'route': items[index].toTicketCounterNameBn!,
               'price': isStudent ? discountedPrice.toString() : originalPrice.toString(),
               'type': isStudent ? 'Student' : 'General',
-              'date': selectedDate != null ? selectedDate.toFormattedDate() : DateTime.now().toString().toFormattedDate(),
+              'advanced': isAdvanced ? 'অগ্রিম' : '',
+              'advance_date': selectedDate != null ? selectedDate.toFormattedDDate() : '',
+              'date': DateTime.now().toString().toFormattedDate(),
               'from_counter_name': storage.read('fromCounterName'),
               'to_counter_name': items[index].toTicketCounterNameBn!,
             },
+            advanced: isAdvanced,
           );
 
           // Optionally, show a success message
@@ -153,65 +156,86 @@ Widget buildTicketList({
 //                 );
 //           }
 
-Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo}) async {
+Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, required bool advanced}) async {
   try {
     // Print the header
     final status = await SunmiPrinterPlus().getStatus();
     debugPrint('Printer Status: $status');
 
-    await SunmiPrinter.printText(
-      '${ticketInfo['from_counter_name']}/${ticketInfo['type']}',
-      style: SunmiTextStyle(
-        bold: true,
-        fontSize: 22,
-        align: SunmiPrintAlign.CENTER,
-      ),
-    );
+    advanced
+        ? await SunmiPrinter.printText(
+            '${ticketInfo['from_counter_name']}/${ticketInfo['type']}/${ticketInfo['advanced']}',
+            style: SunmiTextStyle(
+              bold: true,
+              fontSize: 25,
+              align: SunmiPrintAlign.CENTER,
+            ),
+          )
+        : await SunmiPrinter.printText(
+            '${ticketInfo['from_counter_name']}/${ticketInfo['type']}}',
+            style: SunmiTextStyle(
+              bold: true,
+              fontSize: 25,
+              align: SunmiPrintAlign.CENTER,
+            ),
+          );
     await SunmiPrinter.printText(
       'হাতিরঝিল চক্রাকার বাস সার্ভিস',
       style: SunmiTextStyle(
         bold: true,
-        fontSize: 22,
+        fontSize: 25,
         align: SunmiPrintAlign.CENTER,
       ),
     );
     await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
 
     // Print ticket details
-    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+
     await SunmiPrinter.printText('${ticketInfo['from_counter_name']} টু ${ticketInfo['to_counter_name']}',
         style: SunmiTextStyle(
           bold: true,
-          fontSize: 22,
+          fontSize: 27,
           align: SunmiPrintAlign.CENTER,
         ));
     await SunmiPrinter.printText('তারিখঃ${ticketInfo['date']} ইং');
+    await SunmiPrinter.lineWrap(2);
+    advanced ? await SunmiPrinter.printText('ভ্রমণ তারিখ:${ticketInfo['advance_date']} ইং') : SunmiPrinter.printText('');
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
 
     await SunmiPrinter.printText(
       'Price: ${ticketInfo['price']} BDT',
       style: SunmiTextStyle(
         bold: true,
-        fontSize: 26,
+        fontSize: 35,
         align: SunmiPrintAlign.CENTER,
       ),
     );
 
     await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
 
     // Print footer
-    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+
     await SunmiPrinter.printText('চেকিং এর জন্য টিকিট সংরক্ষন করুন',
         style: SunmiTextStyle(
-          fontSize: 12,
+          fontSize: 20,
+          align: SunmiPrintAlign.CENTER,
         ));
     await SunmiPrinter.printText('বিক্রিত টিকেট ফেরত হবেনা',
         style: SunmiTextStyle(
-          fontSize: 12,
+          fontSize: 20,
+          align: SunmiPrintAlign.CENTER,
         ));
     await SunmiPrinter.printText('অভিযোগ ও পরামর্শ- info@hr-transport.net',
         style: SunmiTextStyle(
-          fontSize: 12,
+          fontSize: 19,
+          align: SunmiPrintAlign.CENTER,
         ));
 
     // Cut paper if the printer supports it

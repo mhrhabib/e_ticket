@@ -1,4 +1,5 @@
 import 'package:e_ticket/core/common/helper/sale_service.dart';
+import 'package:e_ticket/core/common/helper/storage.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
 import 'package:e_ticket/modules/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:e_ticket/modules/profile/presentation/pages/profile_page.dart';
@@ -78,9 +79,15 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: ColorsPalate.primaryColor,
-          title: Text(
-            'ashiqur rahman',
-            style: TextStyle(color: ColorsPalate.buttonFontColor),
+          title: Row(
+            children: [
+              Icon(Icons.location_on_outlined),
+              Gap(8),
+              Text(
+                storage.read('fromCounterName').toString(),
+                style: TextStyle(color: ColorsPalate.buttonFontColor),
+              ),
+            ],
           ),
           actions: [
             InkWell(

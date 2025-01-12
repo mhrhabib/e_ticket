@@ -226,7 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       width: MediaQuery.of(context).size.width * .40,
-      height: MediaQuery.of(context).size.height * .12,
+      // height: MediaQuery.of(context).size.height * .12,
       decoration: BoxDecoration(
         color: ColorsPalate.secondaryColor,
         borderRadius: BorderRadius.circular(12),
