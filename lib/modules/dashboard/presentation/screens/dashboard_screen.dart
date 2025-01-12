@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:e_ticket/core/common/helper/sale_service.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
 import 'package:e_ticket/modules/auth/presentation/cubit/auth_cubit.dart';
@@ -62,7 +64,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         backgroundColor: ColorsPalate.primaryColor,
         title: Text(
           'Dashboard',
-          style: TextStyle(color: ColorsPalate.onPrimaryColor),
+          style: TextStyle(color: ColorsPalate.buttonFontColor),
         ),
       ),
       drawer: Drawer(
@@ -105,15 +107,21 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 onTap: () async {
                   final salesList = await saleService.getSalesFromHive();
                   if (salesList.isNotEmpty) {
-                    await saleService.postSales(salesList);
+                    await saleService.postSales(salesList).then((_) {
+                      context.read<AuthCubit>().logOut().then((_) {
+                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
+                          return true;
+                        });
+                      });
+                    });
                   } else {
+                    context.read<AuthCubit>().logOut().then((_) {
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
+                        return true;
+                      });
+                    });
                     print("Empty sale list **********************");
                   }
-                  context.read<AuthCubit>().logOut().then((_) {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
-                      return true;
-                    });
-                  });
                 },
               ),
             ],
@@ -121,101 +129,104 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
         ),
       ),
       body: BlocBuilder<DashboardCubit, DashboardState>(
-          bloc: context.read<DashboardCubit>()..loadDashboardData(),
+          //bloc: context.read<DashboardCubit>()..loadDashboardData(),
           builder: (context, state) {
-            if (state is DashboardLoading) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: ColorsPalate.primaryColor,
-                ),
-              );
-            }
-            if (state is DashboardFailed) {
-              return Center(
-                child: Text("data"),
-              );
-            }
+        if (state is DashboardLoading) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: ColorsPalate.primaryColor,
+            ),
+          );
+        }
+        if (state is DashboardFailed) {
+          return Center(
+            child: Text("data"),
+          );
+        }
 
-            if (state is DashboardSuccess) {
-              final count = state.dashboardModel.data;
-              return Column(
+        if (state is DashboardSuccess) {
+          final count = state.dashboardModel.data;
+          return Column(
+            children: [
+              Wrap(
+                alignment: WrapAlignment.center,
                 children: [
-                  Wrap(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              Gap(12),
-                              IconButton(
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: Colors.amber,
-                                  ),
-                                  onPressed: () async {
-                                    await context.read<DashboardCubit>().loadDashboardData();
-                                  },
-                                  icon: Icon(
-                                    Icons.refresh,
-                                    size: 32,
-                                  )),
-                              Gap(12),
-                              Text(
-                                'Refresh',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                ),
+                          Gap(12),
+                          IconButton(
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.amber,
                               ),
-                            ],
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: OutlinedButton.icon(
-                                  onPressed: () {
-                                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
-                                  },
-                                  icon: Icon(Icons.bus_alert),
-                                  label: Text('Sale Ticket')),
+                              onPressed: () async {
+                                await context.read<DashboardCubit>().loadDashboardData();
+                              },
+                              icon: Icon(
+                                Icons.refresh,
+                                size: 32,
+                              )),
+                          Gap(12),
+                          Text(
+                            'Refresh',
+                            style: TextStyle(
+                              fontSize: 18,
                             ),
                           ),
                         ],
                       ),
-                      _buildTicketCountsWidget(context, count!.totaltickets.toString(), 'Total Tickets'),
-                      _buildTicketCountsWidget(context, count.totalticketfare.toString(), 'Total Tickets Fare'),
-                      _buildTicketCountsWidget(context, count.totaladvancedtickets.toString(), 'Total  Advanced Tickets '),
-                      _buildTicketCountsWidget(context, count.totaladvancedticketfare.toString(), 'Total Advanced Tickets Fare'),
-                      _buildTicketCountsWidget(context, count.totalstudenttickets.toString(), 'Total Student Tickets'),
-                      _buildTicketCountsWidget(context, count.totalstudentticketfare.toString(), 'Total Student Ticket Fare'),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: OutlinedButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
+                              },
+                              icon: Icon(Icons.bus_alert),
+                              label: Text('Sale Ticket')),
+                        ),
+                      ),
                     ],
                   ),
-                  Gap(20),
-                  OutlinedButton(
-                      onPressed: () async {
-                        final ticketInfo = {
-                          "totaltickets": count.totaltickets.toString(),
-                          "totalticketfare": count.totalticketfare.toString(),
-                          "totaladvancedtickets": count.totaladvancedtickets.toString(),
-                          "totaladvancedticketfare": count.totaladvancedticketfare.toString(),
-                          "totalstudenttickets": count.totalstudenttickets.toString(),
-                          "totalstudentticketfare": count.totalstudentticketfare.toString(),
-                        };
-                        await printTicketWithSunmi(ticketInfo: ticketInfo);
-                      },
-                      child: Text('Print Report')),
+                  _buildTicketCountsWidget(context, count!.totaltickets.toString(), 'Total Tickets'),
+                  _buildTicketCountsWidget(context, count.totalticketfare.toString(), 'Total Tickets Fare'),
+                  _buildTicketCountsWidget(context, count.totaladvancedtickets.toString(), 'Total  Advanced Tickets '),
+                  _buildTicketCountsWidget(context, count.totaladvancedticketfare.toString(), 'Total Advanced Tickets Fare'),
+                  _buildTicketCountsWidget(context, count.totalstudenttickets.toString(), 'Total Student Tickets'),
+                  _buildTicketCountsWidget(context, count.totalstudentticketfare.toString(), 'Total Student Ticket Fare'),
                 ],
-              );
-            }
-            return SizedBox.shrink();
-          }),
+              ),
+              Gap(20),
+              OutlinedButton(
+                  onPressed: () async {
+                    final ticketInfo = {
+                      "totaltickets": count.totaltickets.toString(),
+                      "totalticketfare": count.totalticketfare.toString(),
+                      "totaladvancedtickets": count.totaladvancedtickets.toString(),
+                      "totaladvancedticketfare": count.totaladvancedticketfare.toString(),
+                      "totalstudenttickets": count.totalstudenttickets.toString(),
+                      "totalstudentticketfare": count.totalstudentticketfare.toString(),
+                    };
+                    await printTicketWithSunmi(ticketInfo: ticketInfo);
+                  },
+                  child: Text('Print Report')),
+            ],
+          );
+        }
+        return SizedBox.shrink();
+      }),
     );
   }
 
   _buildTicketCountsWidget(BuildContext context, String count, String title) {
     return Container(
-      padding: EdgeInsets.all(12),
-      margin: EdgeInsets.all(12),
+      padding: EdgeInsets.all(8),
+      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      width: MediaQuery.of(context).size.width * .40,
+      height: MediaQuery.of(context).size.height * .12,
       decoration: BoxDecoration(
         color: ColorsPalate.secondaryColor,
         borderRadius: BorderRadius.circular(12),
@@ -227,19 +238,19 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
           Text(
             count,
             style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
+              fontSize: 20,
+              color: ColorsPalate.onPrimaryColor,
               fontWeight: FontWeight.w600,
             ),
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.38,
+            width: MediaQuery.of(context).size.width * 0.28,
             child: Text(
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
+                fontSize: 14,
+                color: ColorsPalate.onPrimaryColor,
                 fontWeight: FontWeight.w600,
               ),
             ),

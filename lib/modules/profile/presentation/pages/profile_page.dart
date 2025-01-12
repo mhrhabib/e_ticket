@@ -14,7 +14,7 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: ColorsPalate.primaryColor,
         title: Text(
           'Profile',
-          style: TextStyle(color: ColorsPalate.onPrimaryColor),
+          style: TextStyle(color: ColorsPalate.buttonFontColor),
         ),
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(

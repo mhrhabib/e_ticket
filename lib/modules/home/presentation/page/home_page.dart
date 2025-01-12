@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: ColorsPalate.primaryColor,
           title: Text(
             'ashiqur rahman',
-            style: TextStyle(color: ColorsPalate.onPrimaryColor),
+            style: TextStyle(color: ColorsPalate.buttonFontColor),
           ),
           actions: [
             InkWell(
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
               child: Icon(
                 Icons.account_circle_outlined,
                 size: 30,
-                color: ColorsPalate.onPrimaryColor,
+                color: ColorsPalate.buttonFontColor,
               ),
             ),
             Gap(12),

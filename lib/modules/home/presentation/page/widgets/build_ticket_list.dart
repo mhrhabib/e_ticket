@@ -3,6 +3,7 @@
 import 'package:e_ticket/core/common/helper/time_extention.dart';
 import 'package:e_ticket/modules/tickets/data/models/sale_model.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:sunmi_printer_plus/core/enums/enums.dart';
 import 'package:sunmi_printer_plus/core/styles/sunmi_text_style.dart';
 import 'package:sunmi_printer_plus/core/sunmi/sunmi_printer.dart';
@@ -24,10 +25,10 @@ Widget buildTicketList({
     padding: EdgeInsets.all(8),
     itemCount: items!.length,
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
+      crossAxisCount: 3,
       crossAxisSpacing: 8,
       mainAxisSpacing: 8,
-      childAspectRatio: 1.2,
+      childAspectRatio: 0.8,
     ),
     itemBuilder: (context, index) {
       final int originalPrice = items[index].generalPrice!;
@@ -101,19 +102,22 @@ Widget buildTicketList({
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 items[index].toTicketCounterNameBn!,
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 14,
                   color: ColorsPalate.onPrimaryColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              Gap(12),
               Text(
                 isStudent ? '$discountedPrice' : '$originalPrice',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 18,
                   color: ColorsPalate.onPrimaryColor,
                   fontWeight: FontWeight.bold,
                 ),
@@ -159,7 +163,7 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo}) asy
       '${ticketInfo['from_counter_name']}/${ticketInfo['type']}',
       style: SunmiTextStyle(
         bold: true,
-        fontSize: 18,
+        fontSize: 22,
         align: SunmiPrintAlign.CENTER,
       ),
     );
@@ -167,11 +171,11 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo}) asy
       'হাতিরঝিল চক্রাকার বাস সার্ভিস',
       style: SunmiTextStyle(
         bold: true,
-        fontSize: 18,
+        fontSize: 22,
         align: SunmiPrintAlign.CENTER,
       ),
     );
-    await SunmiPrinter.lineWrap(1);
+    await SunmiPrinter.lineWrap(2);
 
     // Print ticket details
     await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
@@ -182,23 +186,33 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo}) asy
           align: SunmiPrintAlign.CENTER,
         ));
     await SunmiPrinter.printText('তারিখঃ${ticketInfo['date']} ইং');
+    await SunmiPrinter.lineWrap(2);
+
     await SunmiPrinter.printText(
       'Price: ${ticketInfo['price']} BDT',
       style: SunmiTextStyle(
         bold: true,
-        fontSize: 22,
+        fontSize: 26,
         align: SunmiPrintAlign.CENTER,
       ),
     );
 
-    await SunmiPrinter.lineWrap(1);
+    await SunmiPrinter.lineWrap(2);
 
     // Print footer
     await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
-    await SunmiPrinter.printText('চেকিং এর জন্য টিকিট সংরক্ষন করুন');
-    await SunmiPrinter.printText('বিক্রিত টিকেট ফেরত হবেনা');
-    await SunmiPrinter.printText('অভিযোগ ও পরামর্শ- info@hr-transport.net');
-    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.printText('চেকিং এর জন্য টিকিট সংরক্ষন করুন',
+        style: SunmiTextStyle(
+          fontSize: 12,
+        ));
+    await SunmiPrinter.printText('বিক্রিত টিকেট ফেরত হবেনা',
+        style: SunmiTextStyle(
+          fontSize: 12,
+        ));
+    await SunmiPrinter.printText('অভিযোগ ও পরামর্শ- info@hr-transport.net',
+        style: SunmiTextStyle(
+          fontSize: 12,
+        ));
 
     // Cut paper if the printer supports it
     await SunmiPrinter.cutPaper();
