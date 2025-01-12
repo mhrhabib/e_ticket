@@ -21,6 +21,8 @@ class AuthCubit extends Cubit<AuthState> {
         storage.write('userId', user.id);
         storage.write('token', user.token);
         storage.write('counterId', user.ticketCounterId);
+        storage.write('deviceId', user.deviceId);
+        storage.write('fromCounterName', user.fromTicketCounterNameBn);
       },
     );
   }

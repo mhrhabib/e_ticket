@@ -17,6 +17,10 @@ import 'package:e_ticket/modules/config/presentation/cubit/counter/counter_cubit
 import 'package:e_ticket/modules/config/presentation/cubit/ticketPrice/ticket_price_cubit.dart';
 import 'package:e_ticket/modules/config/presentation/cubit/ticketRoutes/ticket_route_cubit.dart';
 import 'package:e_ticket/modules/config/presentation/cubit/ticketType/ticket_type_cubit.dart';
+import 'package:e_ticket/modules/dashboard/data/datasource/dashboard_reomote_data_source.dart';
+import 'package:e_ticket/modules/dashboard/data/repository/dashboard_repository_impl.dart';
+import 'package:e_ticket/modules/dashboard/domain/repository/dashboard_repository.dart';
+import 'package:e_ticket/modules/dashboard/domain/usecases/dashboard_usecase.dart';
 import 'package:e_ticket/modules/profile/data/datasource/profile_remote_data_source.dart';
 import 'package:e_ticket/modules/profile/data/repository/profile_repository_impl.dart';
 import 'package:e_ticket/modules/profile/domain/repository/profile_repository.dart';
@@ -36,6 +40,7 @@ import '../modules/config/domain/repository/ticket_price_repository.dart';
 import '../modules/config/domain/repository/user_repositoy.dart';
 import '../modules/config/domain/usecases/get_user_usecase.dart';
 import '../modules/config/presentation/cubit/user/user_cubit.dart';
+import '../modules/dashboard/presentation/cubit/dashboard_cubit.dart';
 import '../modules/profile/presentation/cubit/profile_cubit.dart';
 import '../modules/splash/presentation/cubit/splash_cubit.dart';
 import '../modules/tickets/data/repository/tickets_repository_impl.dart';
@@ -90,6 +95,12 @@ void setup() {
   sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl(sl()));
   sl.registerLazySingleton(() => GetProfileUseCase(sl()));
   sl.registerFactory(() => ProfileCubit(getProfileUseCase: sl()));
+
+  //dashboard
+  sl.registerLazySingleton<DashboardReomoteDataSource>(() => DashboardRemoteDataSourceImpl());
+  sl.registerLazySingleton<DashboardRepository>(() => DashboardRepositoryImpl(sl()));
+  sl.registerLazySingleton(() => DashboardUsecase(sl()));
+  sl.registerFactory(() => DashboardCubit(dashboardUsecase: sl()));
 
   //ticket sale
   sl.registerLazySingleton<TicketRemoteDataSource>(() => TicketRemoteDataSourceImpl());

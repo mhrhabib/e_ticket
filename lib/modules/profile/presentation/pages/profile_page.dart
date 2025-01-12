@@ -1,3 +1,4 @@
+import 'package:e_ticket/core/common/helper/sale_service.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
 import 'package:e_ticket/modules/profile/presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
@@ -112,7 +113,7 @@ class ProfilePage extends StatelessWidget {
                     const SizedBox(height: 20),
                     // User Likes
                     Text(
-                      "Things ${state.profilesModel.data!.name!} Likes:",
+                      "Send ${state.profilesModel.data!.name!}'s data to server:",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -120,16 +121,23 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // ElevatedButton(
-                    //   onPressed: () async {
-                    //     // Get sales from Hive
-                    //     List<SaleModel> salesList = await SaleService().getSalesFromHive();
-
-                    //     // Call API to post sales
-                    //     await ApiService().postSales(salesList);
-                    //   },
-                    //   child: Text('Post Sales to API'),
-                    // ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorsPalate.primaryColor,
+                        foregroundColor: ColorsPalate.onPrimaryColor,
+                      ),
+                      onPressed: () async {
+                        // Get sales from Hive
+                        final SaleService saleService = SaleService();
+                        final salesList = await saleService.getSalesFromHive();
+                        if (salesList.isNotEmpty) {
+                          await saleService.postSales(salesList);
+                        } else {
+                          print("Empty sale list **********************");
+                        }
+                      },
+                      child: Text('Post Sales to API'),
+                    ),
                   ],
                 ),
               ),

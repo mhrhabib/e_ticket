@@ -1,6 +1,6 @@
 import 'package:e_ticket/core/common/helper/storage.dart';
 import 'package:e_ticket/modules/auth/presentation/pages/login_page.dart';
-import 'package:e_ticket/modules/home/presentation/page/home_page.dart';
+import 'package:e_ticket/modules/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/splash_cubit.dart';
@@ -15,8 +15,8 @@ class SplashPage extends StatelessWidget {
       listener: (context, state) {
         if (state is SplashSuccess) {
           // Navigate to login page
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-            return storage.read('token') != null ? HomePage() : LoginPage();
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+            return storage.read('token') != null ? DashboardScreen() : LoginPage();
           }));
         } else if (state is SplashFailure) {
           // Handle failure, e.g., show a dialog

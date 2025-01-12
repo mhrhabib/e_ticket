@@ -16,10 +16,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
       // Map LoginModel to UserEntity
       final userEntity = UserEntity(
+        username: loginModel.data!.user!.username!,
         id: loginModel.data?.user?.id ?? 0,
         name: loginModel.data?.user?.name ?? '',
-        email: loginModel.data?.user?.email ?? '',
+        fromTicketCounterName: loginModel.data!.user!.fromTicketCounterName!,
+        fromTicketCounterNameBn: loginModel.data!.user!.fromTicketCounterNameBn!,
         token: loginModel.data?.token ?? '',
+        mobile: loginModel.data!.user!.mobile!,
+        address: loginModel.data!.user!.address ?? '',
+        deviceId: loginModel.data!.user!.deviceId!,
         ticketCounterId: loginModel.data!.user!.ticketCounterId!,
       );
 

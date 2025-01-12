@@ -1,6 +1,8 @@
+import 'package:e_ticket/core/common/helper/sale_service.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
 import 'package:e_ticket/modules/auth/presentation/cubit/auth_cubit.dart';
 import 'package:e_ticket/modules/auth/presentation/pages/login_page.dart';
+import 'package:e_ticket/modules/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:e_ticket/modules/profile/presentation/pages/profile_page.dart';
 import 'package:e_ticket/modules/tickets/presentation/cubit/ticket_sale_cubit.dart';
 import 'package:flutter/material.dart';
@@ -54,221 +56,247 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool isStudent = false; // To track whether the student fee is applied
+  final SaleService saleService = SaleService();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorsPalate.primaryColor,
-        title: Text(
-          'ashiqur rahman',
-          style: TextStyle(color: ColorsPalate.onPrimaryColor),
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          final salesList = await saleService.getSalesFromHive();
+
+          if (salesList.isNotEmpty) {
+            await saleService.postSales(salesList);
+          } else {
+            print("Empty sale list **********************");
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: ColorsPalate.primaryColor,
+          title: Text(
+            'ashiqur rahman',
+            style: TextStyle(color: ColorsPalate.onPrimaryColor),
+          ),
+          actions: [
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()),
+                );
+              },
+              child: Icon(
+                Icons.account_circle_outlined,
+                size: 30,
+                color: ColorsPalate.onPrimaryColor,
+              ),
+            ),
+            Gap(12),
+          ],
         ),
-        actions: [
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfilePage()),
-              );
-            },
-            child: Icon(
-              Icons.account_circle_outlined,
-              size: 30,
-              color: ColorsPalate.onPrimaryColor,
+        drawer: Drawer(
+          child: SafeArea(
+            child: Column(
+              spacing: 4,
+              children: [
+                Image.asset(
+                  'assets/logo.png',
+                  height: 50,
+                ),
+                Gap(12),
+                Text(
+                  'HR Transports ltd.',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                ),
+                ListTile(
+                  leading: Icon(Icons.dashboard_outlined),
+                  title: Text(
+                    'Dashboard',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => DashboardScreen())),
+                ),
+                ListTile(
+                  leading: Icon(Icons.person_4_outlined),
+                  title: Text('Profile', style: TextStyle(fontSize: 18)),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProfilePage())),
+                ),
+                ListTile(
+                  leading: Icon(Icons.logout),
+                  title: Text('LogOut', style: TextStyle(fontSize: 18)),
+                  onTap: () async {
+                    final salesList = await saleService.getSalesFromHive();
+                    if (salesList.isNotEmpty) {
+                      await saleService.postSales(salesList);
+                    } else {
+                      print("Empty sale list **********************");
+                    }
+                    context.read<AuthCubit>().logOut().then((_) {
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
+                        return true;
+                      });
+                    });
+                  },
+                ),
+              ],
             ),
           ),
-          Gap(12),
-        ],
-      ),
-      drawer: Drawer(
-        child: SafeArea(
-          child: Column(
-            spacing: 20,
-            children: [
-              Image.asset(
-                'assets/logo.png',
-                height: 50,
-              ),
-              // ListTile(
-              //   leading: Icon(Icons.dashboard_outlined),
-              //   title: Text(
-              //     'Ticket sale list',
-              //     style: TextStyle(fontSize: 18),
-              //   ),
-              //   onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => TicketsSaleListPage())),
-              // ),
-              // ListTile(
-              //   leading: Icon(Icons.bus_alert),
-              //   title: Text('Counters', style: TextStyle(fontSize: 18)),
-              //   onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => CountersListPage())),
-              // ),
-              ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('LogOut', style: TextStyle(fontSize: 18)),
-                onTap: () {
-                  context.read<AuthCubit>().logOut().then((_) {
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
-                      return true;
-                    });
-                  });
-                },
-              ),
-            ],
-          ),
         ),
-      ),
-      body: BlocConsumer<TicketSaleCubit, TicketSaleState>(
-        // bloc: TicketSaleCubit(ticketSaleUsecase: sl())..loadTicketFareList(),
-        listener: (context, state) {
-          if (state is TicketSaleSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Ticket sale successful!')),
-            );
-            // Trigger to reload the fare list
-            context.read<TicketSaleCubit>().loadTicketFareList();
-          }
-        },
-        builder: (context, state) {
-          if (state is TicketSaleLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is TicketSaleFailed) {
-            return Center(
-              child: Text(state.message),
-            );
-          }
-          if (state is TicketFareSuccess) {
-            final counters = state.ticketFareModel.prices;
+        body: BlocConsumer<TicketSaleCubit, TicketSaleState>(
+          // bloc: TicketSaleCubit(ticketSaleUsecase: sl())..loadTicketFareList(),
+          listener: (context, state) {
+            if (state is TicketSaleSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Ticket sale successful!')),
+              );
+              // Trigger to reload the fare list
+              context.read<TicketSaleCubit>().loadTicketFareList();
+            }
+          },
+          builder: (context, state) {
+            if (state is TicketSaleLoading) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (state is TicketSaleFailed) {
+              return Center(
+                child: Text(state.message),
+              );
+            }
+            if (state is TicketFareSuccess) {
+              final counters = state.ticketFareModel.prices;
 
-            final route1 = counters!.where((e) => e.routeId == 1).toList();
-            final route2 = counters.where((e) => e.routeId == 2).toList();
+              final route1 = counters!.where((e) => e.routeId == 1).toList();
+              final route2 = counters.where((e) => e.routeId == 2).toList();
 
-            return Column(
-              spacing: 10,
-              children: [
-                Gap(8),
-                FittedBox(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Gap(8),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: selectedRoute == 1 ? ColorsPalate.primaryColor : Colors.grey.shade300,
-                          foregroundColor: selectedRoute == 1 ? Colors.white : Colors.black,
+              return Column(
+                spacing: 10,
+                children: [
+                  Gap(8),
+                  FittedBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Gap(8),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: selectedRoute == 1 ? ColorsPalate.primaryColor : Colors.grey.shade300,
+                            foregroundColor: selectedRoute == 1 ? Colors.white : Colors.black,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              selectedRoute = 1;
+                            });
+                          },
+                          child: Text('Route-01'),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            selectedRoute = 1;
-                          });
-                        },
-                        child: Text('Route-01'),
-                      ),
-                      SizedBox(width: 8),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: selectedRoute == 2 ? ColorsPalate.primaryColor : Colors.grey.shade300,
-                          foregroundColor: selectedRoute == 2 ? Colors.white : Colors.black,
+                        SizedBox(width: 8),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: selectedRoute == 2 ? ColorsPalate.primaryColor : Colors.grey.shade300,
+                            foregroundColor: selectedRoute == 2 ? Colors.white : Colors.black,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              selectedRoute = 2;
+                            });
+                          },
+                          child: Text('Route-02'),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            selectedRoute = 2;
-                          });
-                        },
-                        child: Text('Route-02'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Student Fee', style: TextStyle(fontSize: 16)),
-                            Checkbox(
-                              value: isStudent,
-                              onChanged: (value) {
-                                setState(() {
-                                  isStudent = value!;
-                                });
-                              },
-                            ),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Student Fee', style: TextStyle(fontSize: 16)),
+                              Checkbox(
+                                value: isStudent,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isStudent = value!;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Advanced', style: TextStyle(fontSize: 16)),
-                      Checkbox(
-                        value: isAdvanced,
-                        onChanged: (value) {
-                          setState(() {
-                            isAdvanced = value!;
-                            if (!isAdvanced) {
-                              selectedDate = null; // Reset date if not advanced
-                            }
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                if (isAdvanced)
+                  const SizedBox(height: 2),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          selectedDate ?? 'Select Journey Date',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: selectedDate == null ? Colors.grey : Colors.black,
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorsPalate.secondaryColor,
-                            foregroundColor: ColorsPalate.onPrimaryColor,
-                          ),
-                          onPressed: () => _selectDate(context),
-                          child: const Text('Pick Date'),
+                        const Text('Advanced', style: TextStyle(fontSize: 16)),
+                        Checkbox(
+                          value: isAdvanced,
+                          onChanged: (value) {
+                            setState(() {
+                              isAdvanced = value!;
+                              if (!isAdvanced) {
+                                selectedDate = null; // Reset date if not advanced
+                              }
+                            });
+                          },
                         ),
                       ],
                     ),
                   ),
-                Expanded(
-                  child: selectedRoute == 1
-                      ? buildTicketList(
-                          context: context,
-                          isAdvanced: isAdvanced,
-                          isStudent: isStudent,
-                          items: route1,
-                          selectedDate: selectedDate,
-                        )
-                      : buildTicketList(
-                          context: context,
-                          isAdvanced: isAdvanced,
-                          isStudent: isStudent,
-                          items: route2,
-                          selectedDate: selectedDate,
-                        ),
-                ),
-              ],
+                  if (isAdvanced)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            selectedDate ?? 'Select Journey Date',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: selectedDate == null ? Colors.grey : Colors.black,
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorsPalate.secondaryColor,
+                              foregroundColor: ColorsPalate.onPrimaryColor,
+                            ),
+                            onPressed: () => _selectDate(context),
+                            child: const Text('Pick Date'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Expanded(
+                    child: selectedRoute == 1
+                        ? buildTicketList(
+                            context: context,
+                            isAdvanced: isAdvanced,
+                            isStudent: isStudent,
+                            items: route1,
+                            selectedDate: selectedDate,
+                          )
+                        : buildTicketList(
+                            context: context,
+                            isAdvanced: isAdvanced,
+                            isStudent: isStudent,
+                            items: route2,
+                            selectedDate: selectedDate,
+                          ),
+                  ),
+                ],
+              );
+            }
+            return Center(
+              child: Text('data'),
             );
-          }
-          return Center(
-            child: Text('data'),
-          );
-        },
+          },
+        ),
       ),
     );
   }
