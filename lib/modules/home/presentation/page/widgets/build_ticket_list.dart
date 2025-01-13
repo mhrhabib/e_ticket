@@ -172,13 +172,16 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
             ),
           )
         : await SunmiPrinter.printText(
-            '${ticketInfo['from_counter_name']}/${ticketInfo['type']}}',
+            '${ticketInfo['from_counter_name']}/${ticketInfo['type']}',
             style: SunmiTextStyle(
               bold: true,
               fontSize: 25,
               align: SunmiPrintAlign.CENTER,
             ),
           );
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
+
     await SunmiPrinter.printText(
       'হাতিরঝিল চক্রাকার বাস সার্ভিস',
       style: SunmiTextStyle(
@@ -187,6 +190,9 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
         align: SunmiPrintAlign.CENTER,
       ),
     );
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
 
@@ -199,7 +205,7 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
           align: SunmiPrintAlign.CENTER,
         ));
     await SunmiPrinter.printText('তারিখঃ${ticketInfo['date']} ইং');
-    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(4);
     advanced ? await SunmiPrinter.printText('ভ্রমণ তারিখ:${ticketInfo['advance_date']} ইং') : SunmiPrinter.printText('');
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
@@ -214,11 +220,7 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
       ),
     );
 
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(5);
 
     // Print footer
 
@@ -232,7 +234,7 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
           fontSize: 20,
           align: SunmiPrintAlign.CENTER,
         ));
-    await SunmiPrinter.printText('অভিযোগ ও পরামর্শ- info@hr-transport.net',
+    await SunmiPrinter.printText('অভিযোগ ও পরামর্শ-info@hr-transport.net',
         style: SunmiTextStyle(
           fontSize: 19,
           align: SunmiPrintAlign.CENTER,
