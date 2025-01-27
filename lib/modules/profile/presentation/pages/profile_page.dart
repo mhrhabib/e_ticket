@@ -136,7 +136,10 @@ class ProfilePage extends StatelessWidget {
                           print("Empty sale list **********************");
                         }
                       },
-                      child: Text('Post Sales to API'),
+                      child: Text(
+                        'Post Sales to API',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ],
                 ),

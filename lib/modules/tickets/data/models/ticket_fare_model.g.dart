@@ -62,16 +62,17 @@ class PricesAdapter extends TypeAdapter<Prices> {
       generalPrice: fields[2] as int?,
       toTicketCounterName: fields[3] as String?,
       toTicketCounterNameBn: fields[4] as String?,
-      toTicketCounterId: fields[5] as int?,
-      routeName: fields[6] as String?,
-      routeId: fields[7] as int?,
+      counterShortName: fields[5] as dynamic,
+      toTicketCounterId: fields[6] as dynamic,
+      routeName: fields[7] as String?,
+      routeId: fields[8] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Prices obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -83,10 +84,12 @@ class PricesAdapter extends TypeAdapter<Prices> {
       ..writeByte(4)
       ..write(obj.toTicketCounterNameBn)
       ..writeByte(5)
-      ..write(obj.toTicketCounterId)
+      ..write(obj.counterShortName)
       ..writeByte(6)
-      ..write(obj.routeName)
+      ..write(obj.toTicketCounterId)
       ..writeByte(7)
+      ..write(obj.routeName)
+      ..writeByte(8)
       ..write(obj.routeId);
   }
 

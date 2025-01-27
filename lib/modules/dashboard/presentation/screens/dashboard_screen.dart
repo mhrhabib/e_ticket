@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:e_ticket/core/common/helper/sale_service.dart';
+import 'package:e_ticket/core/common/helper/storage.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
 import 'package:e_ticket/modules/auth/presentation/cubit/auth_cubit.dart';
 import 'package:e_ticket/modules/dashboard/presentation/cubit/dashboard_cubit.dart';
@@ -105,22 +106,43 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                 leading: Icon(Icons.logout),
                 title: Text('LogOut', style: TextStyle(fontSize: 18)),
                 onTap: () async {
+                  final hasInternet = await checkInternetConnection();
+                  print(">>>>>>>>>>>>>>>>internet = $hasInternet");
+                  if (!hasInternet) {
+                    // Show a snackbar for no internet
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('No internet connection. Cannot log out.'),
+                      ),
+                    );
+                    return;
+                  }
                   final salesList = await saleService.getSalesFromHive();
                   if (salesList.isNotEmpty) {
-                    await saleService.postSales(salesList).then((_) {
-                      context.read<AuthCubit>().logOut().then((_) {
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
-                          return true;
-                        });
-                      });
-                    });
+                    try {
+                      // Attempt to post sales data
+                      await saleService.postSales(salesList);
+                      await clearLocalData();
+                      // Logout after successful sync
+                      await context.read<AuthCubit>().logOut();
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (route) => false,
+                      );
+                    } catch (e) {
+                      // Handle API call errors
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to sync sales: $e')),
+                      );
+                    }
                   } else {
-                    context.read<AuthCubit>().logOut().then((_) {
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (login) {
-                        return true;
-                      });
-                    });
-                    print("Empty sale list **********************");
+                    // No sales data to sync; proceed with logout
+                    await clearLocalData();
+                    await context.read<AuthCubit>().logOut();
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      (route) => false,
+                    );
                   }
                 },
               ),

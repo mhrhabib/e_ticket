@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:math';
 import 'package:e_ticket/core/common/helper/time_extention.dart';
 import 'package:e_ticket/modules/tickets/data/models/sale_model.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,20 @@ import 'package:gap/gap.dart';
 import 'package:sunmi_printer_plus/core/enums/enums.dart';
 import 'package:sunmi_printer_plus/core/styles/sunmi_text_style.dart';
 import 'package:sunmi_printer_plus/core/sunmi/sunmi_printer.dart';
-import 'package:uuid/uuid.dart';
 import 'package:hive/hive.dart';
 import '../../../../../core/common/helper/storage.dart';
 import '../../../../../core/utils/colors_palate.dart';
 import '../../../../tickets/data/models/ticket_fare_model.dart';
 import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
+
+// Generate a unique offid based on routeId, counterShortName, date, and random digits
+String generateOffid(String routeId, String counterShortName) {
+  final now = DateTime.now();
+  final datePart = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+  final randomDigits = List.generate(8, (index) => (index % 10).toString()).map((_) => (Random().nextInt(10)).toString()).join();
+
+  return '$routeId${counterShortName.toUpperCase()}$datePart$randomDigits';
+}
 
 Widget buildTicketList({
   BuildContext? context,
@@ -46,8 +55,8 @@ Widget buildTicketList({
             return;
           }
 
-          // Generate a unique offid using UUID
-          String offid = Uuid().v4();
+          // Use the generateOffid function
+          String offid = generateOffid(items[index].routeId!.toString(), items[index].counterShortName);
 
           // Create a SaleModel object
           SaleModel sale = SaleModel(
@@ -64,14 +73,15 @@ Widget buildTicketList({
             deviceId: 1, // Use appropriate device ID if needed
           );
 
+          print(sale.journeyDate);
+          print(sale.offid);
           // Store the sale object locally using Hive
           Box<SaleModel> saleBox = Hive.box<SaleModel>('sales');
           saleBox.add(sale);
 
-          print(DateTime.now().toString().toFormattedDate());
-
           await printTicketWithSunmi(
             ticketInfo: {
+              'offid': offid,
               'route': items[index].toTicketCounterNameBn!,
               'price': isStudent ? discountedPrice.toString() : originalPrice.toString(),
               'type': isStudent ? 'Student' : 'General',
@@ -206,7 +216,7 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
         ));
     await SunmiPrinter.printText('তারিখঃ${ticketInfo['date']} ইং');
     await SunmiPrinter.lineWrap(4);
-    advanced ? await SunmiPrinter.printText('ভ্রমণ তারিখ:${ticketInfo['advance_date']} ইং') : SunmiPrinter.printText('');
+    advanced ? await SunmiPrinter.printText('মেয়াদ:${ticketInfo['advance_date']} ইং পর্যন্ত') : SunmiPrinter.printText('');
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
@@ -235,6 +245,12 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
           align: SunmiPrintAlign.CENTER,
         ));
     await SunmiPrinter.printText('অভিযোগ ও পরামর্শ-info@hr-transport.net',
+        style: SunmiTextStyle(
+          fontSize: 19,
+          align: SunmiPrintAlign.CENTER,
+        ));
+    await SunmiPrinter.lineWrap(5);
+    await SunmiPrinter.printText('${ticketInfo['offid']}',
         style: SunmiTextStyle(
           fontSize: 19,
           align: SunmiPrintAlign.CENTER,

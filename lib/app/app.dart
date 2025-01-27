@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("helllooooooooooooo");
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => sl<SplashCubit>()..initializeApp()),
@@ -35,7 +34,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'HR Smart E-Tickets',
         theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,

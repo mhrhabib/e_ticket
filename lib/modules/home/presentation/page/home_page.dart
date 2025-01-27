@@ -7,7 +7,6 @@ import 'package:e_ticket/modules/tickets/presentation/cubit/ticket_sale_cubit.da
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
 import 'widgets/build_ticket_list.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,9 +19,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int selectedRoute = 1; // Initially select Route-01
 
-  int? selectedUserId;
-  int? selectedRouteId;
-  int? selectedCounterId;
   String? selectedType;
   int? fromTicketCounterId;
   String? price;
@@ -38,21 +34,6 @@ class _HomePageState extends State<HomePage> {
 
   bool isAdvanced = false; // Tracks checkbox state
   String? selectedDate; // Stores the selected journey date
-
-  // Method to show the date picker
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      setState(() {
-        selectedDate = DateFormat('yyyy-MM-dd').format(picked);
-      });
-    }
-  }
 
   bool isStudent = false; // To track whether the student fee is applied
   final SaleService saleService = SaleService();
@@ -135,7 +116,6 @@ class _HomePageState extends State<HomePage> {
               final route2 = counters.where((e) => e.routeId == 2).toList();
 
               return Column(
-                spacing: 10,
                 children: [
                   Gap(8),
                   FittedBox(
@@ -192,15 +172,21 @@ class _HomePageState extends State<HomePage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         const Text('Advanced', style: TextStyle(fontSize: 16)),
+                        Gap(12),
                         Checkbox(
                           value: isAdvanced,
                           onChanged: (value) {
                             setState(() {
                               isAdvanced = value!;
-                              if (!isAdvanced) {
+                              if (isAdvanced) {
+                                // Set selectedDate to one month from today
+                                final today = DateTime.now();
+                                selectedDate = DateTime(today.year, today.month + 1, today.day).toIso8601String();
+                                print(selectedDate);
+                              } else {
                                 selectedDate = null; // Reset date if not advanced
                               }
                             });
@@ -209,30 +195,6 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  if (isAdvanced)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            selectedDate ?? 'Select Journey Date',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: selectedDate == null ? Colors.grey : Colors.black,
-                            ),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorsPalate.secondaryColor,
-                              foregroundColor: ColorsPalate.onPrimaryColor,
-                            ),
-                            onPressed: () => _selectDate(context),
-                            child: const Text('Pick Date'),
-                          ),
-                        ],
-                      ),
-                    ),
                   Expanded(
                     child: selectedRoute == 1
                         ? buildTicketList(

@@ -5,9 +5,7 @@ import 'package:e_ticket/modules/tickets/domain/usecase/ticket_sale_usecase.dart
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../data/models/ticket_fare_model.dart';
-
 part 'ticket_sale_state.dart';
 
 class TicketSaleCubit extends Cubit<TicketSaleState> {

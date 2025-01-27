@@ -78,11 +78,9 @@ class TicketRemoteDataSourceImpl extends TicketRemoteDataSource {
     final box = Hive.box<TicketFareModel>('fareBox');
     try {
       final response = await BaseClient.post(url: '${Urls.baseUrl}/admin/ticketfare');
-
       // Save the data to Hive
       final ticketFareModel = TicketFareModel.fromJson(response.data);
       box.put('fareData', ticketFareModel);
-
       return ticketFareModel;
     } on ClientException catch (e) {
       // Return cached data if available
