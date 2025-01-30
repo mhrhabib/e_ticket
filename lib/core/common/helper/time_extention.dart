@@ -10,12 +10,17 @@ extension DateTimeFormatting on String {
     }
   }
 
-  String toFormattedDDate({String format = 'dd/MM/yyyy'}) {
+  String toFormattedDDate(String dateString, {String format = 'dd/MM/yyyy, hh:mm:ss'}) {
     try {
-      DateTime parsedDate = DateTime.parse(this);
-      return DateFormat(format).format(parsedDate);
+      // Parse the input date string to DateTime
+      DateTime dateTime = DateTime.parse(dateString);
+
+      // Format the DateTime object using the specified format
+      DateFormat formatter = DateFormat(format);
+      return formatter.format(dateTime);
     } catch (e) {
-      return "Invalid date"; // Return an error message if parsing fails
+      // Handle parsing errors (e.g., invalid date format)
+      return 'Invalid Date';
     }
   }
 }

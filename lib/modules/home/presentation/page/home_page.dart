@@ -28,9 +28,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   context.read<TicketSaleCubit>().loadTicketFareList();
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TicketSaleCubit>().loadTicketFareList();
+    });
     saleBox = Hive.box<SaleModel>('sales');
     super.initState();
   }
@@ -132,7 +132,8 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Gap(8),
+                        Gap(4),
+
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: selectedRoute == 1 ? ColorsPalate.primaryColor : Colors.grey.shade300,
@@ -143,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                               selectedRoute = 1;
                             });
                           },
-                          child: Text('Route-01'),
+                          child: Text('এফডিসি মোড় টু এফডিসি মোড়'),
                         ),
                         SizedBox(width: 8),
                         ElevatedButton(
@@ -156,25 +157,26 @@ class _HomePageState extends State<HomePage> {
                               selectedRoute = 2;
                             });
                           },
-                          child: Text('Route-02'),
+                          child: Text('শুটিং ক্লাব টু  শুটিং ক্লাব'),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Student Fee', style: TextStyle(fontSize: 16)),
-                              Checkbox(
-                                value: isStudent,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isStudent = value!;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
+                        Gap(4),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       const Text('Student Fee', style: TextStyle(fontSize: 16)),
+                        //       Checkbox(
+                        //         value: isStudent,
+                        //         onChanged: (value) {
+                        //           setState(() {
+                        //             isStudent = value!;
+                        //           });
+                        //         },
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -182,25 +184,43 @@ class _HomePageState extends State<HomePage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Advanced', style: TextStyle(fontSize: 16)),
-                        Gap(12),
-                        Checkbox(
-                          value: isAdvanced,
-                          onChanged: (value) {
-                            setState(() {
-                              isAdvanced = value!;
-                              if (isAdvanced) {
-                                // Set selectedDate to one month from today
-                                final today = DateTime.now();
-                                selectedDate = DateTime(today.year, today.month + 1, today.day).toIso8601String();
-                                print(selectedDate);
-                              } else {
-                                selectedDate = null; // Reset date if not advanced
-                              }
-                            });
-                          },
+                        Row(
+                          children: [
+                            const Text('Advanced', style: TextStyle(fontSize: 16)),
+                            Gap(12),
+                            Checkbox(
+                              value: isAdvanced,
+                              onChanged: (value) {
+                                setState(() {
+                                  isAdvanced = value!;
+                                  if (isAdvanced) {
+                                    // Set selectedDate to one month from today
+                                    final today = DateTime.now();
+                                    selectedDate = DateTime(today.year, today.month + 1, today.day).toIso8601String();
+                                    print(selectedDate);
+                                  } else {
+                                    selectedDate = null; // Reset date if not advanced
+                                  }
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Student Fee', style: TextStyle(fontSize: 16)),
+                            Checkbox(
+                              value: isStudent,
+                              onChanged: (value) {
+                                setState(() {
+                                  isStudent = value!;
+                                });
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -246,7 +266,7 @@ class _HomePageState extends State<HomePage> {
                         print("Empty sale list **********************");
                       }
                     },
-                    child: Text('Submit to server'),
+                    child: Text('Submit to Server'),
                   ),
                   Gap(28),
                 ],

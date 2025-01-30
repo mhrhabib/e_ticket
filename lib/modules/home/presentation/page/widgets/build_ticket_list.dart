@@ -67,13 +67,13 @@ Widget buildTicketList({
             type: isStudent ? 'Student' : 'General',
             price: isStudent ? discountedPrice.toDouble() : originalPrice.toDouble(),
             isAdvanced: isAdvanced ? true : false,
-            saleDate: DateTime.now().toString(),
-            journeyDate: isAdvanced ? selectedDate!.toFormattedDate(format: 'yyyy-MM-dd') : DateTime.now().toString(),
+            saleDate: DateTime.now().toString().toFormattedDDate(DateTime.now().toString(), format: 'yyyy-MM-dd HH:mm:ss'),
+            journeyDate: isAdvanced ? selectedDate!.toFormattedDate(format: 'yyyy-MM-dd') : DateTime.now().toString().toFormattedDDate(DateTime.now().toString(), format: 'yyyy-MM-dd'),
             userId: storage.read('userId'),
             deviceId: 1, // Use appropriate device ID if needed
           );
 
-          print(sale.journeyDate);
+          print(sale.saleDate);
           print(" off id >>>>>>${sale.offid}");
           // Store the sale object locally using Hive
           Box<SaleModel> saleBox = Hive.box<SaleModel>('sales');
@@ -84,10 +84,10 @@ Widget buildTicketList({
               'offid': offid,
               'route': items[index].toTicketCounterNameBn!,
               'price': isStudent ? discountedPrice.toString() : originalPrice.toString(),
-              'type': isStudent ? 'Student' : 'General',
+              'type': isStudent ? 'শিক্ষার্থী' : 'সাধারণ',
               'advanced': isAdvanced ? 'অগ্রিম' : '',
-              'advance_date': selectedDate != null ? selectedDate.toFormattedDDate() : '',
-              'date': DateTime.now().toString().toFormattedDate(),
+              'advance_date': selectedDate != null ? selectedDate.toFormattedDate() : '',
+              'date': DateTime.now().toString().toFormattedDDate(DateTime.now().toString()),
               'from_counter_name': storage.read('fromCounterName'),
               'to_counter_name': items[index].toTicketCounterNameBn!,
             },
@@ -215,10 +215,10 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
           align: SunmiPrintAlign.CENTER,
         ));
     await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.printText('তারিখঃ${ticketInfo['date']}');
     await SunmiPrinter.lineWrap(4);
-    advanced ? await SunmiPrinter.printText('মেয়াদ:${ticketInfo['advance_date']} পর্যন্ত') : SunmiPrinter.printText('');
+    await SunmiPrinter.printText('তারিখঃ ${ticketInfo['date']}');
+    await SunmiPrinter.lineWrap(4);
+    advanced ? await SunmiPrinter.printText('মেয়াদ: ${ticketInfo['advance_date']} পর্যন্ত') : SunmiPrinter.printText('');
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
