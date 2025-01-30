@@ -133,7 +133,6 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Gap(4),
-
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: selectedRoute == 1 ? ColorsPalate.primaryColor : Colors.grey.shade300,
@@ -160,23 +159,6 @@ class _HomePageState extends State<HomePage> {
                           child: Text('শুটিং ক্লাব টু  শুটিং ক্লাব'),
                         ),
                         Gap(4),
-                        // Padding(
-                        //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //     children: [
-                        //       const Text('Student Fee', style: TextStyle(fontSize: 16)),
-                        //       Checkbox(
-                        //         value: isStudent,
-                        //         onChanged: (value) {
-                        //           setState(() {
-                        //             isStudent = value!;
-                        //           });
-                        //         },
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),
@@ -186,41 +168,36 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            const Text('Advanced', style: TextStyle(fontSize: 16)),
-                            Gap(12),
-                            Checkbox(
-                              value: isAdvanced,
-                              onChanged: (value) {
-                                setState(() {
-                                  isAdvanced = value!;
-                                  if (isAdvanced) {
-                                    // Set selectedDate to one month from today
-                                    final today = DateTime.now();
-                                    selectedDate = DateTime(today.year, today.month + 1, today.day).toIso8601String();
-                                    print(selectedDate);
-                                  } else {
-                                    selectedDate = null; // Reset date if not advanced
-                                  }
-                                });
-                              },
-                            ),
-                          ],
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isAdvanced ? ColorsPalate.primaryColor : Colors.grey.shade300,
+                            foregroundColor: isAdvanced ? Colors.white : Colors.black,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isAdvanced = !isAdvanced;
+                              if (isAdvanced) {
+                                final today = DateTime.now();
+                                selectedDate = DateTime(today.year, today.month + 1, today.day).toIso8601String();
+                                print(selectedDate);
+                              } else {
+                                selectedDate = null;
+                              }
+                            });
+                          },
+                          child: Text('অগ্রিম'),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Student Fee', style: TextStyle(fontSize: 16)),
-                            Checkbox(
-                              value: isStudent,
-                              onChanged: (value) {
-                                setState(() {
-                                  isStudent = value!;
-                                });
-                              },
-                            ),
-                          ],
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isStudent ? ColorsPalate.primaryColor : Colors.grey.shade300,
+                            foregroundColor: isStudent ? Colors.white : Colors.black,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isStudent = !isStudent;
+                            });
+                          },
+                          child: Text('শিক্ষার্থী'),
                         ),
                       ],
                     ),

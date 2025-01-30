@@ -58,6 +58,7 @@ Widget buildTicketList({
           // Use the generateOffid function
           String offid = generateOffid(items[index].routeId!.toString(), storage.read('shortName'));
           print("short name ${storage.read('shortName')}");
+          print(storage.read('userId'));
           // Create a SaleModel object
           SaleModel sale = SaleModel(
             offid: offid,

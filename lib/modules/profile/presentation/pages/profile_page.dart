@@ -1,11 +1,22 @@
+import 'package:e_ticket/app/di.dart';
 import 'package:e_ticket/core/common/helper/sale_service.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
 import 'package:e_ticket/modules/profile/presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +29,7 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(
-        //bloc: ProfileCubit(getProfileUseCase: sl())..loadProfilesData(),
+        bloc: ProfileCubit(getProfileUseCase: sl())..loadProfilesData(),
         builder: (context, state) {
           if (state is ProfileLoading) {
             return Center(
