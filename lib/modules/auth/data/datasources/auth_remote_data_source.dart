@@ -16,9 +16,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<LoginModel> login(String email, String password) async {
-    final response = await client.post(
-      '/login', // Replace with the correct endpoint
-      data: {'email': email, 'password': password},
+    final response = await BaseClient.post(
+      url: Urls.loginUrl,
+      data: {'identifier': email, 'password': password},
     );
 
     if (response.statusCode == 200) {

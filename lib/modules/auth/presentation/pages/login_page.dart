@@ -1,21 +1,23 @@
-import 'package:e_ticket/core/utils/colors_palate.dart';
-import 'package:e_ticket/modules/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
+
 import '../../../../core/common/widgets/custom_text_field.dart';
+import '../../../../core/utils/colors_palate.dart';
+import '../../../dashboard/presentation/screens/dashboard_screen.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final ValueNotifier<bool> isPasswordVisible = ValueNotifier(false);
 
   LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
@@ -24,43 +26,57 @@ class LoginPage extends StatelessWidget {
             }));
           }
           if (state is AuthFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('something went wrong')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Something went wrong')),
+            );
           }
         },
         builder: (context, state) {
-          // if (state is AuthLoading) {
-          //   return Center(child: CircularProgressIndicator());
-          // }
-
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 20,
               children: [
+                const Text(
+                  'HR Smart E-Tickets',
+                  style: TextStyle(fontSize: 22),
+                ),
+                const Gap(12),
                 Image.asset(
                   'assets/logo.png',
                   height: 80,
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 CustomTextFormField(
                   controller: emailController,
-                  hintText: 'Email',
+                  hintText: 'Identifiers',
                   borderDecoration: OutlineInputBorder(
-                    borderSide: BorderSide(),
+                    borderSide: const BorderSide(),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                CustomTextFormField(
-                  controller: passwordController,
-                  hintText: 'Password',
-                  borderDecoration: OutlineInputBorder(
-                    borderSide: BorderSide(),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  obscureText: true,
+                Gap(12),
+                ValueListenableBuilder<bool>(
+                  valueListenable: isPasswordVisible,
+                  builder: (context, value, child) {
+                    return CustomTextFormField(
+                      controller: passwordController,
+                      hintText: 'Password',
+                      borderDecoration: OutlineInputBorder(
+                        borderSide: const BorderSide(),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      suffix: IconButton(
+                        icon: Icon(value ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          isPasswordVisible.value = !isPasswordVisible.value;
+                        },
+                      ),
+                      obscureText: !value,
+                    );
+                  },
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorsPalate.primaryColor,

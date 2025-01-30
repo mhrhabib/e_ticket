@@ -3,10 +3,12 @@ import 'package:e_ticket/core/common/helper/storage.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
 import 'package:e_ticket/modules/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:e_ticket/modules/profile/presentation/pages/profile_page.dart';
+import 'package:e_ticket/modules/tickets/data/models/sale_model.dart';
 import 'package:e_ticket/modules/tickets/presentation/cubit/ticket_sale_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'widgets/build_ticket_list.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,17 +20,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedRoute = 1; // Initially select Route-01
-
+  final SaleService saleService = SaleService();
   String? selectedType;
   int? fromTicketCounterId;
   String? price;
+  late Box<SaleModel> saleBox;
 
   @override
   void initState() {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   context.read<TicketSaleCubit>().loadTicketFareList();
     // });
-
+    saleBox = Hive.box<SaleModel>('sales');
     super.initState();
   }
 
@@ -36,7 +39,6 @@ class _HomePageState extends State<HomePage> {
   String? selectedDate; // Stores the selected journey date
 
   bool isStudent = false; // To track whether the student fee is applied
-  final SaleService saleService = SaleService();
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +74,15 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: [
             InkWell(
-              onTap: () {
+              onTap: () async {
+                final SaleService saleService = SaleService();
+                final salesList = await saleService.getSalesFromHive();
+                if (salesList.isNotEmpty) {
+                  await saleService.postSales(salesList);
+                } else {
+                  print("Empty sale list **********************");
+                }
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ProfilePage()),
@@ -212,6 +222,33 @@ class _HomePageState extends State<HomePage> {
                             selectedDate: selectedDate,
                           ),
                   ),
+                  ValueListenableBuilder(
+                    valueListenable: saleBox.listenable(),
+                    builder: (context, Box<SaleModel> box, _) {
+                      int saleCount = box.length;
+                      return Text(
+                        "Current Sales: $saleCount",
+                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                      );
+                    },
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorsPalate.primaryColor,
+                      foregroundColor: ColorsPalate.buttonFontColor,
+                    ),
+                    onPressed: () async {
+                      final SaleService saleService = SaleService();
+                      final salesList = await saleService.getSalesFromHive();
+                      if (salesList.isNotEmpty) {
+                        await saleService.postSales(salesList);
+                      } else {
+                        print("Empty sale list **********************");
+                      }
+                    },
+                    child: Text('Submit to server'),
+                  ),
+                  Gap(28),
                 ],
               );
             }

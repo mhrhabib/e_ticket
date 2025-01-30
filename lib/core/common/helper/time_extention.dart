@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 extension DateTimeFormatting on String {
-  String toFormattedDate({String format = 'dd/MMM/yyyy, hh:mm a'}) {
+  String toFormattedDate({String format = 'yyyy-MM-dd'}) {
     try {
       DateTime parsedDate = DateTime.parse(this);
       return DateFormat(format).format(parsedDate);
@@ -10,7 +10,7 @@ extension DateTimeFormatting on String {
     }
   }
 
-  String toFormattedDDate({String format = 'dd/MMM/yyyy'}) {
+  String toFormattedDDate({String format = 'dd/MM/yyyy'}) {
     try {
       DateTime parsedDate = DateTime.parse(this);
       return DateFormat(format).format(parsedDate);

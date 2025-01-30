@@ -65,3 +65,12 @@ Future<bool> checkInternetConnection() async {
     return false;
   }
 }
+
+void clearStorage() {
+  storage.remove('userId');
+  storage.remove('token');
+  storage.remove('counterId');
+  storage.remove('shortName');
+  storage.remove('deviceId');
+  storage.remove('fromCounterName');
+}

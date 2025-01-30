@@ -21,18 +21,24 @@ class AuthCubit extends Cubit<AuthState> {
         storage.write('userId', user.id);
         storage.write('token', user.token);
         storage.write('counterId', user.ticketCounterId);
+        storage.write('shortName', user.counterShortName);
         storage.write('deviceId', user.deviceId);
         storage.write('fromCounterName', user.fromTicketCounterNameBn);
       },
     );
   }
 
+  //
+
   Future logOut() async {
     emit(const AuthLoading());
     final result = await loginUseCase.logOut();
     result.fold(
       (failure) => emit(AuthFailure(_mapFailureToMessage(failure))),
-      (user) => emit(AuthLogOutSuccess(user)),
+      (user) {
+        clearStorage();
+        emit(AuthLogOutSuccess(user));
+      },
     );
   }
 

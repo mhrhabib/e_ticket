@@ -18,7 +18,7 @@ import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 String generateOffid(String routeId, String counterShortName) {
   final now = DateTime.now();
   final datePart = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
-  final randomDigits = List.generate(8, (index) => (index % 10).toString()).map((_) => (Random().nextInt(10)).toString()).join();
+  final randomDigits = List.generate(4, (index) => (index % 10).toString()).map((_) => (Random().nextInt(10)).toString()).join();
 
   return '$routeId${counterShortName.toUpperCase()}$datePart$randomDigits';
 }
@@ -56,8 +56,8 @@ Widget buildTicketList({
           }
 
           // Use the generateOffid function
-          String offid = generateOffid(items[index].routeId!.toString(), items[index].counterShortName);
-
+          String offid = generateOffid(items[index].routeId!.toString(), storage.read('shortName'));
+          print("short name ${storage.read('shortName')}");
           // Create a SaleModel object
           SaleModel sale = SaleModel(
             offid: offid,
@@ -68,13 +68,13 @@ Widget buildTicketList({
             price: isStudent ? discountedPrice.toDouble() : originalPrice.toDouble(),
             isAdvanced: isAdvanced ? true : false,
             saleDate: DateTime.now().toString(),
-            journeyDate: isAdvanced ? selectedDate!.toFormattedDate() : DateTime.now().toString(),
+            journeyDate: isAdvanced ? selectedDate!.toFormattedDate(format: 'yyyy-MM-dd') : DateTime.now().toString(),
             userId: storage.read('userId'),
             deviceId: 1, // Use appropriate device ID if needed
           );
 
           print(sale.journeyDate);
-          print(sale.offid);
+          print(" off id >>>>>>${sale.offid}");
           // Store the sale object locally using Hive
           Box<SaleModel> saleBox = Hive.box<SaleModel>('sales');
           saleBox.add(sale);
@@ -97,7 +97,7 @@ Widget buildTicketList({
           // Optionally, show a success message
           ScaffoldMessenger.of(context).clearSnackBars();
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Sale added to list locally!')),
+            SnackBar(content: Text('Ticket sale successful!')),
           );
         },
         child: Container(
@@ -214,9 +214,11 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
           fontSize: 27,
           align: SunmiPrintAlign.CENTER,
         ));
-    await SunmiPrinter.printText('তারিখঃ${ticketInfo['date']} ইং');
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.printText('তারিখঃ${ticketInfo['date']}');
     await SunmiPrinter.lineWrap(4);
-    advanced ? await SunmiPrinter.printText('মেয়াদ:${ticketInfo['advance_date']} ইং পর্যন্ত') : SunmiPrinter.printText('');
+    advanced ? await SunmiPrinter.printText('মেয়াদ:${ticketInfo['advance_date']} পর্যন্ত') : SunmiPrinter.printText('');
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
@@ -252,7 +254,7 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
     await SunmiPrinter.lineWrap(5);
     await SunmiPrinter.printText('${ticketInfo['offid']}',
         style: SunmiTextStyle(
-          fontSize: 19,
+          fontSize: 27,
           align: SunmiPrintAlign.CENTER,
         ));
 

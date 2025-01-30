@@ -5,6 +5,7 @@ class UserEntity {
   final int ticketCounterId;
   final String fromTicketCounterName;
   final String fromTicketCounterNameBn;
+  final String counterShortName;
   final int deviceId;
   final String mobile;
   final String address;
@@ -17,6 +18,7 @@ class UserEntity {
     required this.ticketCounterId,
     required this.fromTicketCounterName,
     required this.fromTicketCounterNameBn,
+    required this.counterShortName,
     required this.deviceId,
     required this.mobile,
     required this.address,

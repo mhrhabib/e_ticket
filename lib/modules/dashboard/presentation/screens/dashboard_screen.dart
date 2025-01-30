@@ -213,12 +213,12 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
                       ),
                     ],
                   ),
-                  _buildTicketCountsWidget(context, count!.totaltickets.toString(), 'Total Tickets'),
-                  _buildTicketCountsWidget(context, count.totalticketfare.toString(), 'Total Tickets Fare'),
-                  _buildTicketCountsWidget(context, count.totaladvancedtickets.toString(), 'Total  Advanced Tickets '),
-                  _buildTicketCountsWidget(context, count.totaladvancedticketfare.toString(), 'Total Advanced Tickets Fare'),
-                  _buildTicketCountsWidget(context, count.totalstudenttickets.toString(), 'Total Student Tickets'),
-                  _buildTicketCountsWidget(context, count.totalstudentticketfare.toString(), 'Total Student Ticket Fare'),
+                  _buildTicketCountsWidget(context, count!.totaltickets.toString(), 'Sales Quantity'),
+                  _buildTicketCountsWidget(context, count.totalticketfare.toString(), 'Sales Amount'),
+                  _buildTicketCountsWidget(context, count.totaladvancedtickets.toString(), 'Advance Quantity'),
+                  _buildTicketCountsWidget(context, count.totaladvancedticketfare.toString(), 'Advance Amounts'),
+                  _buildTicketCountsWidget(context, count.totalstudenttickets.toString(), 'Student Quantity'),
+                  _buildTicketCountsWidget(context, count.totalstudentticketfare.toString(), 'Student Amounts'),
                 ],
               ),
               Gap(20),
@@ -307,12 +307,12 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
       // Print each data point
       await SunmiPrinter.setAlignment(SunmiPrintAlign.LEFT);
-      await SunmiPrinter.printText('Total Tickets: ${ticketInfo['totaltickets']}');
-      await SunmiPrinter.printText('Total Ticket Fare: ${ticketInfo['totalticketfare']} BDT');
-      await SunmiPrinter.printText('Advanced Tickets: ${ticketInfo['totaladvancedtickets']}');
-      await SunmiPrinter.printText('Advanced Ticket Fare: ${ticketInfo['totaladvancedticketfare']} BDT');
-      await SunmiPrinter.printText('Student Tickets: ${ticketInfo['totalstudenttickets']}');
-      await SunmiPrinter.printText('Student Ticket Fare: ${ticketInfo['totalstudentticketfare']} BDT');
+      await SunmiPrinter.printText('Sales Quantity: ${ticketInfo['totaltickets']}');
+      await SunmiPrinter.printText('Sales Amount: ${ticketInfo['totalticketfare']} BDT');
+      await SunmiPrinter.printText('Advance Quantity: ${ticketInfo['totaladvancedtickets']}');
+      await SunmiPrinter.printText('Advance  Amounts: ${ticketInfo['totaladvancedticketfare']} BDT');
+      await SunmiPrinter.printText('Student Quantity: ${ticketInfo['totalstudenttickets']}');
+      await SunmiPrinter.printText('Student Amounts: ${ticketInfo['totalstudentticketfare']} BDT');
 
       await SunmiPrinter.printText(
         '-----------------',

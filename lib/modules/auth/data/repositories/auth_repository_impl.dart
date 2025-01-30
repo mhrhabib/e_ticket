@@ -21,6 +21,7 @@ class AuthRepositoryImpl implements AuthRepository {
         name: loginModel.data?.user?.name ?? '',
         fromTicketCounterName: loginModel.data!.user!.fromTicketCounterName!,
         fromTicketCounterNameBn: loginModel.data!.user!.fromTicketCounterNameBn!,
+        counterShortName: loginModel.data!.user!.counterShortName!,
         token: loginModel.data?.token ?? '',
         mobile: loginModel.data!.user!.mobile!,
         address: loginModel.data!.user!.address ?? '',
