@@ -26,6 +26,7 @@ class AuthRepositoryImpl implements AuthRepository {
         mobile: loginModel.data!.user!.mobile!,
         address: loginModel.data!.user!.address ?? '',
         deviceId: loginModel.data!.user!.deviceId!,
+        deviceSerialNumber: loginModel.data!.user!.deviceSerialNumber!,
         ticketCounterId: loginModel.data!.user!.ticketCounterId!,
       );
 

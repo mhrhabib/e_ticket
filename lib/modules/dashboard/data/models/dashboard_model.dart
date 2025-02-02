@@ -26,8 +26,13 @@ class Data {
   int? totaladvancedticketfare;
   int? totalstudenttickets;
   int? totalstudentticketfare;
+  int? tenqty;
+  int? fifteenqty;
+  int? twentyqty;
+  int? twentyfiveqty;
+  int? fourtyqty;
 
-  Data({this.totaltickets, this.totalticketfare, this.totaladvancedtickets, this.totaladvancedticketfare, this.totalstudenttickets, this.totalstudentticketfare});
+  Data({this.totaltickets, this.totalticketfare, this.totaladvancedtickets, this.totaladvancedticketfare, this.totalstudenttickets, this.totalstudentticketfare, this.tenqty, this.fifteenqty, this.twentyqty, this.twentyfiveqty, this.fourtyqty});
 
   Data.fromJson(Map<String, dynamic> json) {
     totaltickets = json['totaltickets'];
@@ -36,6 +41,11 @@ class Data {
     totaladvancedticketfare = json['totaladvancedticketfare'];
     totalstudenttickets = json['totalstudenttickets'];
     totalstudentticketfare = json['totalstudentticketfare'];
+    tenqty = json['tenqty'];
+    fifteenqty = json['fifteenqty'];
+    twentyqty = json['twentyqty'];
+    twentyfiveqty = json['twentyfiveqty'];
+    fourtyqty = json['fourtyqty'];
   }
 
   Map<String, dynamic> toJson() {
@@ -46,6 +56,11 @@ class Data {
     data['totaladvancedticketfare'] = totaladvancedticketfare;
     data['totalstudenttickets'] = totalstudenttickets;
     data['totalstudentticketfare'] = totalstudentticketfare;
+    data['tenqty'] = tenqty;
+    data['fifteenqty'] = fifteenqty;
+    data['twentyqty'] = twentyqty;
+    data['twentyfiveqty'] = twentyfiveqty;
+    data['fourtyqty'] = fourtyqty;
     return data;
   }
 }

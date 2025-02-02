@@ -49,10 +49,11 @@ class User {
   String? fromTicketCounterNameBn;
   String? counterShortName;
   int? deviceId;
+  String? deviceSerialNumber;
   String? mobile;
-  dynamic address;
+  String? address;
 
-  User({this.id, this.name, this.username, this.ticketCounterId, this.fromTicketCounterName, this.fromTicketCounterNameBn, this.counterShortName, this.deviceId, this.mobile, this.address});
+  User({this.id, this.name, this.username, this.ticketCounterId, this.fromTicketCounterName, this.fromTicketCounterNameBn, this.counterShortName, this.deviceId, this.deviceSerialNumber, this.mobile, this.address});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -63,6 +64,7 @@ class User {
     fromTicketCounterNameBn = json['from_ticket_counter_name_bn'];
     counterShortName = json['counter_short_name'];
     deviceId = json['device_id'];
+    deviceSerialNumber = json['device_serial_number'];
     mobile = json['mobile'];
     address = json['address'];
   }
@@ -77,6 +79,7 @@ class User {
     data['from_ticket_counter_name_bn'] = fromTicketCounterNameBn;
     data['counter_short_name'] = counterShortName;
     data['device_id'] = deviceId;
+    data['device_serial_number'] = deviceSerialNumber;
     data['mobile'] = mobile;
     data['address'] = address;
     return data;

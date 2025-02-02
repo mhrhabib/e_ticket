@@ -80,6 +80,10 @@ Widget buildTicketList({
           Box<SaleModel> saleBox = Hive.box<SaleModel>('sales');
           saleBox.add(sale);
 
+          if (storage.read('fromCounterName') == items[index].toTicketCounterNameBn) {
+            print('চক্রাকার ট্রিপ');
+          }
+
           await printTicketWithSunmi(
             ticketInfo: {
               'offid': offid,
@@ -208,13 +212,19 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
     await SunmiPrinter.lineWrap(2);
 
     // Print ticket details
-
-    await SunmiPrinter.printText('${ticketInfo['from_counter_name']} টু ${ticketInfo['to_counter_name']}',
-        style: SunmiTextStyle(
-          bold: true,
-          fontSize: 27,
-          align: SunmiPrintAlign.CENTER,
-        ));
+    storage.read('fromCounterName') == ticketInfo['to_counter_name']
+        ? await SunmiPrinter.printText('চক্রাকার ট্রিপ',
+            style: SunmiTextStyle(
+              bold: true,
+              fontSize: 27,
+              align: SunmiPrintAlign.CENTER,
+            ))
+        : await SunmiPrinter.printText('${ticketInfo['from_counter_name']} টু ${ticketInfo['to_counter_name']}',
+            style: SunmiTextStyle(
+              bold: true,
+              fontSize: 27,
+              align: SunmiPrintAlign.CENTER,
+            ));
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(4);
     await SunmiPrinter.printText('তারিখঃ ${ticketInfo['date']}');

@@ -7,6 +7,7 @@ class UserEntity {
   final String fromTicketCounterNameBn;
   final String counterShortName;
   final int deviceId;
+  final String deviceSerialNumber;
   final String mobile;
   final String address;
   final String token;
@@ -20,6 +21,7 @@ class UserEntity {
     required this.fromTicketCounterNameBn,
     required this.counterShortName,
     required this.deviceId,
+    required this.deviceSerialNumber,
     required this.mobile,
     required this.address,
     required this.token,

@@ -70,7 +70,10 @@ void clearStorage() {
   storage.remove('userId');
   storage.remove('token');
   storage.remove('counterId');
+  storage.remove('name');
+  storage.remove('userName');
   storage.remove('shortName');
   storage.remove('deviceId');
   storage.remove('fromCounterName');
+  storage.remove('serialNumber');
 }

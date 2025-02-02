@@ -19,10 +19,13 @@ class AuthCubit extends Cubit<AuthState> {
       (user) {
         emit(AuthSuccess(user));
         storage.write('userId', user.id);
+        storage.write('name', user.name);
         storage.write('token', user.token);
+        storage.write('userName', user.username);
         storage.write('counterId', user.ticketCounterId);
         storage.write('shortName', user.counterShortName);
         storage.write('deviceId', user.deviceId);
+        storage.write('serialNumber', user.deviceSerialNumber);
         storage.write('fromCounterName', user.fromTicketCounterNameBn);
       },
     );
