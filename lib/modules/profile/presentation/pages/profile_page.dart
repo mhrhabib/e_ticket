@@ -1,5 +1,6 @@
 import 'package:e_ticket/app/di.dart';
 import 'package:e_ticket/core/common/helper/sale_service.dart';
+import 'package:e_ticket/core/common/helper/storage.dart';
 import 'package:e_ticket/core/utils/colors_palate.dart';
 import 'package:e_ticket/modules/profile/presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
@@ -138,6 +139,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         foregroundColor: ColorsPalate.onPrimaryColor,
                       ),
                       onPressed: () async {
+                        final hasInternet = await checkInternetConnection();
+                        print(">>>>>>>>>>>>>>>>internet = $hasInternet");
+                        if (!hasInternet) {
+                          // Show a snackbar for no internet
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('No internet connection. Cannot log out.'),
+                            ),
+                          );
+                          return;
+                        }
                         // Get sales from Hive
                         final SaleService saleService = SaleService();
                         final salesList = await saleService.getSalesFromHive();

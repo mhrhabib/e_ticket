@@ -46,6 +46,17 @@ class _HomePageState extends State<HomePage> {
       canPop: true,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) {
+          final hasInternet = await checkInternetConnection();
+          print(">>>>>>>>>>>>>>>>internet = $hasInternet");
+          if (!hasInternet) {
+            // Show a snackbar for no internet
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No internet connection. Cannot log out.'),
+              ),
+            );
+            return;
+          }
           final salesList = await saleService.getSalesFromHive();
 
           if (salesList.isNotEmpty) {
@@ -75,6 +86,17 @@ class _HomePageState extends State<HomePage> {
           actions: [
             InkWell(
               onTap: () async {
+                final hasInternet = await checkInternetConnection();
+                print(">>>>>>>>>>>>>>>>internet = $hasInternet");
+                if (!hasInternet) {
+                  // Show a snackbar for no internet
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('No internet connection. Cannot log out.'),
+                    ),
+                  );
+                  return;
+                }
                 final SaleService saleService = SaleService();
                 final salesList = await saleService.getSalesFromHive();
                 if (salesList.isNotEmpty) {
@@ -235,6 +257,17 @@ class _HomePageState extends State<HomePage> {
                       foregroundColor: ColorsPalate.buttonFontColor,
                     ),
                     onPressed: () async {
+                      final hasInternet = await checkInternetConnection();
+                      print(">>>>>>>>>>>>>>>>internet = $hasInternet");
+                      if (!hasInternet) {
+                        // Show a snackbar for no internet
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('No internet connection. Connect first.'),
+                          ),
+                        );
+                        return;
+                      }
                       final SaleService saleService = SaleService();
                       final salesList = await saleService.getSalesFromHive();
                       if (salesList.isNotEmpty) {

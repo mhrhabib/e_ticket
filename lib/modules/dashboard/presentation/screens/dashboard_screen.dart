@@ -169,190 +169,192 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
 
         if (state is DashboardSuccess) {
           final count = state.dashboardModel.data;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Gap(12),
-                      IconButton(
-                          style: IconButton.styleFrom(
-                            backgroundColor: Colors.amber,
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Gap(12),
+                        IconButton(
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.amber,
+                            ),
+                            onPressed: () async {
+                              await context.read<DashboardCubit>().loadDashboardData();
+                            },
+                            icon: Icon(
+                              Icons.refresh,
+                              size: 32,
+                            )),
+                        Gap(12),
+                        Text(
+                          'Refresh',
+                          style: TextStyle(
+                            fontSize: 18,
                           ),
-                          onPressed: () async {
-                            await context.read<DashboardCubit>().loadDashboardData();
-                          },
-                          icon: Icon(
-                            Icons.refresh,
-                            size: 32,
-                          )),
-                      Gap(12),
+                        ),
+                      ],
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: OutlinedButton.icon(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
+                            },
+                            icon: Icon(Icons.bus_alert),
+                            label: Text('Sale Ticket')),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildTicketCountsWidget(context, count!.totaltickets.toString(), 'Sales Quantity'),
+                    _buildTicketCountsWidget(context, count.totalticketfare.toString(), 'Sales Amount'),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildTicketCountsWidget(context, count.totaladvancedtickets.toString(), 'Advance Quantity'),
+                    _buildTicketCountsWidget(context, count.totaladvancedticketfare.toString(), 'Advance Amounts'),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildTicketCountsWidget(context, count.totalstudenttickets.toString(), 'Student Quantity'),
+                    _buildTicketCountsWidget(context, count.totalstudentticketfare.toString(), 'Student Amounts'),
+                  ],
+                ),
+                Gap(12),
+                Padding(
+                  padding: const EdgeInsets.only(left: 30.0, top: 8, bottom: 8),
+                  child: Row(
+                    children: [
                       Text(
-                        'Refresh',
+                        '10 TK Ticket QTY: ',
                         style: TextStyle(
                           fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
+                      ),
+                      Text(
+                        '${count.tenqty}',
+                        style: TextStyle(fontSize: 20),
                       ),
                     ],
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: OutlinedButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
-                          },
-                          icon: Icon(Icons.bus_alert),
-                          label: Text('Sale Ticket')),
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 30.0, top: 8, bottom: 8),
+                  child: Row(
+                    children: [
+                      Text(
+                        '15 TK Ticket QTY: ',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        '${count.fifteenqty}',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildTicketCountsWidget(context, count!.totaltickets.toString(), 'Sales Quantity'),
-                  _buildTicketCountsWidget(context, count.totalticketfare.toString(), 'Sales Amount'),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildTicketCountsWidget(context, count.totaladvancedtickets.toString(), 'Advance Quantity'),
-                  _buildTicketCountsWidget(context, count.totaladvancedticketfare.toString(), 'Advance Amounts'),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildTicketCountsWidget(context, count.totalstudenttickets.toString(), 'Student Quantity'),
-                  _buildTicketCountsWidget(context, count.totalstudentticketfare.toString(), 'Student Amounts'),
-                ],
-              ),
-              Gap(12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                child: Row(
-                  children: [
-                    Text(
-                      '10 Tk Ticket Quantity: ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 30.0, top: 8, bottom: 8),
+                  child: Row(
+                    children: [
+                      Text(
+                        '20 TK Ticket QTY: ',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '${count.tenqty}',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                child: Row(
-                  children: [
-                    Text(
-                      '15 Tk Ticket Quantity: ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                      Text(
+                        '${count.twentyqty}',
+                        style: TextStyle(fontSize: 20),
                       ),
-                    ),
-                    Text(
-                      '${count.fifteenqty}',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                child: Row(
-                  children: [
-                    Text(
-                      '20 Tk Ticket Quantity: ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                Padding(
+                  padding: const EdgeInsets.only(left: 30.0, top: 8, bottom: 8),
+                  child: Row(
+                    children: [
+                      Text(
+                        '25 TK Ticket QTY: ',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '${count.twentyqty}',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                child: Row(
-                  children: [
-                    Text(
-                      '25 Tk Ticket Quantity: ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                      Text(
+                        '${count.twentyfiveqty}',
+                        style: TextStyle(fontSize: 20),
                       ),
-                    ),
-                    Text(
-                      '${count.twentyfiveqty}',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                child: Row(
-                  children: [
-                    Text(
-                      '40 Tk Ticket Quantity: ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                Padding(
+                  padding: const EdgeInsets.only(left: 30.0, top: 8, bottom: 8),
+                  child: Row(
+                    children: [
+                      Text(
+                        '40 TK Ticket QTY: ',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '${count.fourtyqty}',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
+                      Text(
+                        '${count.fourtyqty}',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Gap(12),
-              Text(
-                'Device serial Number: ${storage.read('serialNumber')}',
-                style: TextStyle(
-                  fontSize: 16,
+                Gap(12),
+                Text(
+                  'Device serial Number: ${storage.read('serialNumber')}',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-              Gap(20),
-              OutlinedButton(
-                  onPressed: () async {
-                    final ticketInfo = {
-                      "totaltickets": count.totaltickets.toString(),
-                      "totalticketfare": count.totalticketfare.toString(),
-                      "totaladvancedtickets": count.totaladvancedtickets.toString(),
-                      "totaladvancedticketfare": count.totaladvancedticketfare.toString(),
-                      "totalstudenttickets": count.totalstudenttickets.toString(),
-                      "totalstudentticketfare": count.totalstudentticketfare.toString(),
-                      '10ticketquantity': count.tenqty,
-                      '15ticketquantity': count.fifteenqty,
-                      '20ticketquantity': count.twentyqty,
-                      '25ticketquantity': count.twentyfiveqty,
-                      '40ticketquantity': count.fourtyqty,
-                    };
-                    await printTicketWithSunmi(ticketInfo: ticketInfo);
-                  },
-                  child: Text('Print Report')),
-            ],
+                Gap(20),
+                OutlinedButton(
+                    onPressed: () async {
+                      final ticketInfo = {
+                        "totaltickets": count.totaltickets.toString(),
+                        "totalticketfare": count.totalticketfare.toString(),
+                        "totaladvancedtickets": count.totaladvancedtickets.toString(),
+                        "totaladvancedticketfare": count.totaladvancedticketfare.toString(),
+                        "totalstudenttickets": count.totalstudenttickets.toString(),
+                        "totalstudentticketfare": count.totalstudentticketfare.toString(),
+                        '10ticketquantity': count.tenqty,
+                        '15ticketquantity': count.fifteenqty,
+                        '20ticketquantity': count.twentyqty,
+                        '25ticketquantity': count.twentyfiveqty,
+                        '40ticketquantity': count.fourtyqty,
+                      };
+                      await printTicketWithSunmi(ticketInfo: ticketInfo);
+                    },
+                    child: Text('Print Report')),
+              ],
+            ),
           );
         }
         return SizedBox.shrink();
@@ -420,7 +422,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       );
       await SunmiPrinter.lineWrap(1);
       await SunmiPrinter.printText('User: $userName');
-      await SunmiPrinter.printText('User: $userId');
+      await SunmiPrinter.printText('ID: $userId');
       await SunmiPrinter.printText('Print Date: $currentDate');
       await SunmiPrinter.lineWrap(4);
 
@@ -433,11 +435,11 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       await SunmiPrinter.printText('Advance Quantity: ${ticketInfo['totaladvancedtickets']}, Amounts : ${ticketInfo['totaladvancedticketfare']}');
       await SunmiPrinter.printText('Student Quantity: ${ticketInfo['totalstudenttickets']}, Amounts : ${ticketInfo['totalstudentticketfare']}');
 
-      await SunmiPrinter.printText('10 Tk Ticket Quantity: ${ticketInfo['10ticketquantity']}');
-      await SunmiPrinter.printText('15 Tk Ticket Quantity: ${ticketInfo['15ticketquantity']}');
-      await SunmiPrinter.printText('20 Tk Ticket Quantity: ${ticketInfo['20ticketquantity']}');
-      await SunmiPrinter.printText('25 Tk Ticket Quantity: ${ticketInfo['25ticketquantity']}');
-      await SunmiPrinter.printText('40 Tk Ticket Quantity: ${ticketInfo['40ticketquantity']}');
+      await SunmiPrinter.printText('10 TK Ticket QTY: ${ticketInfo['10ticketquantity']}');
+      await SunmiPrinter.printText('15 TK Ticket QTY: ${ticketInfo['15ticketquantity']}');
+      await SunmiPrinter.printText('20 TK Ticket QTY: ${ticketInfo['20ticketquantity']}');
+      await SunmiPrinter.printText('25 TK Ticket QTY: ${ticketInfo['25ticketquantity']}');
+      await SunmiPrinter.printText('40 TK Ticket QTY: ${ticketInfo['40ticketquantity']}');
 
       await SunmiPrinter.printText('-----------------', style: SunmiTextStyle(align: SunmiPrintAlign.CENTER));
 
@@ -445,7 +447,7 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       await SunmiPrinter.printText('Device Serial No: $serialNumber');
       await SunmiPrinter.lineWrap(2);
 
-      await SunmiPrinter.printText('Thank you for choosing us!',
+      await SunmiPrinter.printText('Thank you!',
           style: SunmiTextStyle(
             align: SunmiPrintAlign.CENTER,
           ));
