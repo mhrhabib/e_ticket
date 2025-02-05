@@ -176,10 +176,21 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
     // Print the header
     final status = await SunmiPrinterPlus().getStatus();
     debugPrint('Printer Status: $status');
-
+    await SunmiPrinter.printText('তারিখঃ ${ticketInfo['date']} SL-${ticketInfo['offid']}',
+        style: SunmiTextStyle(
+          align: SunmiPrintAlign.CENTER,
+          fontSize: 14,
+        ));
+    await SunmiPrinter.lineWrap(4);
+    await SunmiPrinter.lineWrap(4);
+    await SunmiPrinter.printText(
+      'হাতিরঝিল চক্রাকার বাস সার্ভিস',
+      style: SunmiTextStyle(bold: true, fontSize: 25, align: SunmiPrintAlign.CENTER),
+    );
+    await SunmiPrinter.lineWrap(3);
     advanced
         ? await SunmiPrinter.printText(
-            '${ticketInfo['from_counter_name']}/${ticketInfo['type']}/${ticketInfo['advanced']}',
+            'কাউন্টার: ${ticketInfo['from_counter_name']}/${ticketInfo['type']}/${ticketInfo['advanced']}',
             style: SunmiTextStyle(
               bold: true,
               fontSize: 25,
@@ -187,31 +198,31 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
             ),
           )
         : await SunmiPrinter.printText(
-            '${ticketInfo['from_counter_name']}/${ticketInfo['type']}',
+            'কাউন্টার: ${ticketInfo['from_counter_name']}/${ticketInfo['type']}',
             style: SunmiTextStyle(
               bold: true,
               fontSize: 25,
               align: SunmiPrintAlign.CENTER,
             ),
           );
+    await SunmiPrinter.lineWrap(8);
+
+    // Print ticket details
+    await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.lineWrap(2);
 
+    await SunmiPrinter.lineWrap(5);
+
     await SunmiPrinter.printText(
-      'হাতিরঝিল চক্রাকার বাস সার্ভিস',
+      'Price: ${ticketInfo['price']}.00 TAKA',
       style: SunmiTextStyle(
         bold: true,
-        fontSize: 25,
+        fontSize: 35,
         align: SunmiPrintAlign.CENTER,
       ),
     );
     await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
-
-    // Print ticket details
     storage.read('fromCounterName') == ticketInfo['to_counter_name']
         ? await SunmiPrinter.printText('চক্রাকার ট্রিপ',
             style: SunmiTextStyle(
@@ -219,29 +230,26 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
               fontSize: 27,
               align: SunmiPrintAlign.CENTER,
             ))
-        : await SunmiPrinter.printText('${ticketInfo['from_counter_name']} টু ${ticketInfo['to_counter_name']}',
+        : await SunmiPrinter.printText('${ticketInfo['from_counter_name']} - ${ticketInfo['to_counter_name']}',
             style: SunmiTextStyle(
               bold: true,
               fontSize: 27,
               align: SunmiPrintAlign.CENTER,
             ));
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(4);
-    await SunmiPrinter.printText('তারিখঃ ${ticketInfo['date']}');
-    await SunmiPrinter.lineWrap(4);
-    advanced ? await SunmiPrinter.printText('মেয়াদ: ${ticketInfo['advance_date']} পর্যন্ত') : SunmiPrinter.printText('');
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
-    await SunmiPrinter.lineWrap(2);
 
-    await SunmiPrinter.printText(
-      'Price: ${ticketInfo['price']} BDT',
-      style: SunmiTextStyle(
-        bold: true,
-        fontSize: 35,
-        align: SunmiPrintAlign.CENTER,
-      ),
-    );
+    advanced
+        ? await SunmiPrinter.printText(
+            'মেয়াদ: ${ticketInfo['advance_date']} পর্যন্ত',
+            style: SunmiTextStyle(
+              bold: true,
+              fontSize: 35,
+              align: SunmiPrintAlign.CENTER,
+            ),
+          )
+        : SunmiPrinter.printText('');
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
+    await SunmiPrinter.lineWrap(2);
 
     await SunmiPrinter.lineWrap(5);
 
@@ -252,20 +260,25 @@ Future<void> printTicketWithSunmi({required Map<String, String> ticketInfo, requ
           fontSize: 20,
           align: SunmiPrintAlign.CENTER,
         ));
-    await SunmiPrinter.printText('বিক্রিত টিকেট ফেরত হবেনা',
+    await SunmiPrinter.printText('বিক্রিত টিকেট ফেরতযোগ্য নহে',
         style: SunmiTextStyle(
           fontSize: 20,
           align: SunmiPrintAlign.CENTER,
         ));
-    await SunmiPrinter.printText('অভিযোগ ও পরামর্শ-info@hr-transport.net',
+    await SunmiPrinter.printText('অভিযোগ ও পরামর্শ:-',
         style: SunmiTextStyle(
           fontSize: 19,
           align: SunmiPrintAlign.CENTER,
         ));
-    await SunmiPrinter.lineWrap(5);
-    await SunmiPrinter.printText('${ticketInfo['offid']}',
+    await SunmiPrinter.printText('info@hr-transport.net',
         style: SunmiTextStyle(
-          fontSize: 27,
+          fontSize: 19,
+          align: SunmiPrintAlign.CENTER,
+        ));
+    await SunmiPrinter.lineWrap(3);
+    await SunmiPrinter.printText('পরিচালনায় - এইচআর ট্রান্সপোর্ট এজেন্সি',
+        style: SunmiTextStyle(
+          fontSize: 19,
           align: SunmiPrintAlign.CENTER,
         ));
 

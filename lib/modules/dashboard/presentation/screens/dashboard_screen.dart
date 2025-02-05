@@ -430,10 +430,10 @@ class _DashboardScreenState extends State<DashboardScreen> with WidgetsBindingOb
       await SunmiPrinter.lineWrap(1);
 
       // Print sales details
-      await SunmiPrinter.printText('Sales Quantity: ${ticketInfo['totaltickets']}');
+      await SunmiPrinter.printText('Sales QTY: ${ticketInfo['totaltickets']}');
       await SunmiPrinter.printText('Sales Amount (BDT): ${ticketInfo['totalticketfare']}');
-      await SunmiPrinter.printText('Advance Quantity: ${ticketInfo['totaladvancedtickets']}, Amounts : ${ticketInfo['totaladvancedticketfare']}');
-      await SunmiPrinter.printText('Student Quantity: ${ticketInfo['totalstudenttickets']}, Amounts : ${ticketInfo['totalstudentticketfare']}');
+      await SunmiPrinter.printText('Advance QTY: ${ticketInfo['totaladvancedtickets']}, Amounts : ${ticketInfo['totaladvancedticketfare']}');
+      await SunmiPrinter.printText('Student QTY: ${ticketInfo['totalstudenttickets']}, Amounts : ${ticketInfo['totalstudentticketfare']}');
 
       await SunmiPrinter.printText('10 TK Ticket QTY: ${ticketInfo['10ticketquantity']}');
       await SunmiPrinter.printText('15 TK Ticket QTY: ${ticketInfo['15ticketquantity']}');
